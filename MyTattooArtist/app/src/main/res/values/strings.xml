@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MyTattooArtist</string>
+    <string name="myaccount">My account</string>
+    <string name="logout">Log out</string>
 </resources>
