@@ -11,4 +11,8 @@
     <string name="profileAddressTag">Address:</string>
     <string name="profilePhoneTag">Phone number:</string>
     <string name="profileSocialsTag">Socials</string>
+    <string name="facebook_application_id" translatable="false">MyTattooArtist</string>
+    <string name="facebook_login_protocol_scheme" translatable="false">MyTattooArtist</string>
+    <string name="sign_in_success">Signed in successfully!</string>
+    <string name="sign_out_success">Signed out successfully!</string>
 </resources>
