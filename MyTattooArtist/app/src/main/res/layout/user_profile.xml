@@ -2,13 +2,102 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/userProfileNameTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/profileNameTag"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="20dp"
+        tools:layout_editor_absoluteX="50dp" />
 
     <TextView
         android:id="@+id/userProfileNameField"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/ProfileNameTag"
-        tools:layout_editor_absoluteX="35dp"
-        tools:layout_editor_absoluteY="51dp" />
+        app:layout_constraintTop_toBottomOf="@+id/userProfileNameTag"
+        android:layout_marginTop="10dp"
+        tools:layout_editor_absoluteX="50dp" />
+
+    <TextView
+        android:id="@+id/userProfileCityTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/profileCityTag"
+        app:layout_constraintTop_toBottomOf="@+id/userProfileNameField"
+        android:layout_marginTop="20dp"
+        tools:layout_editor_absoluteX="50dp" />
+
+    <TextView
+        android:id="@+id/userProfileCityField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/userProfileCityTag"
+        android:layout_marginTop="10dp"
+        tools:layout_editor_absoluteX="50dp" />
+
+    <TextView
+        android:id="@+id/userProfileMailTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/profileMailTag"
+        app:layout_constraintTop_toBottomOf="@+id/userProfileCityField"
+        android:layout_marginTop="20dp"
+        tools:layout_editor_absoluteX="50dp" />
+
+    <TextView
+        android:id="@+id/userProfileMailField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/userProfileMailTag"
+        android:layout_marginTop="10dp"
+        tools:layout_editor_absoluteX="50dp" />
+
+    <TextView
+        android:id="@+id/userProfileUsernameTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/profileUsernameTag"
+        app:layout_constraintTop_toBottomOf="@+id/userProfileMailField"
+        android:layout_marginTop="20dp"
+        tools:layout_editor_absoluteX="50dp" />
+
+    <TextView
+        android:id="@+id/userProfileUsernameField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/userProfileUsernameTag"
+        android:layout_marginTop="10dp"
+        tools:layout_editor_absoluteX="50dp" />
+
+    <TextView
+        android:id="@+id/userProfilePasswordTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/profilePasswordTag"
+        app:layout_constraintTop_toBottomOf="@+id/userProfileUsernameField"
+        android:layout_marginTop="20dp"
+        tools:layout_editor_absoluteX="50dp" />
+
+    <TextView
+        android:id="@+id/userProfilePasswordField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/userProfilePasswordTag"
+        android:layout_marginTop="10dp"
+        tools:layout_editor_absoluteX="50dp" />
+
+    <Button
+        android:id="@+id/userProfileChangePasswordButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/changePasswordButton"
+        app:layout_constraintTop_toBottomOf="@+id/userProfilePasswordField"
+        tools:layout_editor_absoluteX="50dp" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
