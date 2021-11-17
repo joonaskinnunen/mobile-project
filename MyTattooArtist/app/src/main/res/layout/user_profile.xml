@@ -9,95 +9,87 @@
         android:id="@+id/userProfileNameTag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="60dp"
         android:text="@string/profileNameTag"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="20dp"
-        tools:layout_editor_absoluteX="50dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/userProfileNameField"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/userProfileNameTag"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
-        tools:layout_editor_absoluteX="50dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userProfileNameTag" />
 
     <TextView
         android:id="@+id/userProfileCityTag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/profileCityTag"
-        app:layout_constraintTop_toBottomOf="@+id/userProfileNameField"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
-        tools:layout_editor_absoluteX="50dp" />
+        android:text="@string/profileCityTag"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userProfileNameField" />
 
     <TextView
         android:id="@+id/userProfileCityField"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/userProfileCityTag"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
-        tools:layout_editor_absoluteX="50dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userProfileCityTag" />
 
     <TextView
         android:id="@+id/userProfileMailTag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/profileMailTag"
-        app:layout_constraintTop_toBottomOf="@+id/userProfileCityField"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
-        tools:layout_editor_absoluteX="50dp" />
+        android:text="@string/profileMailTag"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userProfileCityField" />
 
     <TextView
         android:id="@+id/userProfileMailField"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/userProfileMailTag"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
-        tools:layout_editor_absoluteX="50dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userProfileMailTag" />
 
     <TextView
         android:id="@+id/userProfileUsernameTag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/profileUsernameTag"
-        app:layout_constraintTop_toBottomOf="@+id/userProfileMailField"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
-        tools:layout_editor_absoluteX="50dp" />
+        android:text="@string/profileUsernameTag"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userProfileMailField" />
 
     <TextView
         android:id="@+id/userProfileUsernameField"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/userProfileUsernameTag"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
-        tools:layout_editor_absoluteX="50dp" />
-
-    <TextView
-        android:id="@+id/userProfilePasswordTag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/profilePasswordTag"
-        app:layout_constraintTop_toBottomOf="@+id/userProfileUsernameField"
-        android:layout_marginTop="20dp"
-        tools:layout_editor_absoluteX="50dp" />
-
-    <TextView
-        android:id="@+id/userProfilePasswordField"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/userProfilePasswordTag"
-        android:layout_marginTop="10dp"
-        tools:layout_editor_absoluteX="50dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userProfileUsernameTag" />
 
     <Button
         android:id="@+id/userProfileChangePasswordButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
         android:text="@string/changePasswordButton"
-        app:layout_constraintTop_toBottomOf="@+id/userProfilePasswordField"
-        tools:layout_editor_absoluteX="50dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userProfileUsernameField" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
