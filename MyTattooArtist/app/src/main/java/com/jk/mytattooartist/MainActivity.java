@@ -95,7 +95,8 @@ public class MainActivity extends AppCompatActivity {
         // Choose authentication providers
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.EmailBuilder().build(),
-                new AuthUI.IdpConfig.FacebookBuilder().build()
+                new AuthUI.IdpConfig.FacebookBuilder().build(),
+                new AuthUI.IdpConfig.GoogleBuilder().build()
         /*        new AuthUI.IdpConfig.PhoneBuilder().build(),
                 new AuthUI.IdpConfig.GoogleBuilder().build(),
                 new AuthUI.IdpConfig.TwitterBuilder().build(), */
@@ -141,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
                         String signOutSuccessString = getString(R.string.sign_out_success);
                         Toast toast = Toast.makeText(context, signOutSuccessString, Toast.LENGTH_SHORT);
                         toast.show();
+                        createSignInIntent();
                     }
                 });
         // [END auth_fui_signout]
