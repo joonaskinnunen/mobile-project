@@ -1,10 +1,5 @@
 package com.jk.mytattooartist;
 
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +8,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
@@ -28,6 +28,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -166,15 +167,19 @@ public class MainActivity extends AppCompatActivity {
         myRef.child("message").setValue("Viesti");
 
         // Read from the database
-        myRef.child("message").addValueEventListener(new ValueEventListener() {
+        myRef.child("users").child("artists").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                Log.d("VALUE: ", "Value is: " + value);
+
+                ArrayList<String> value = (ArrayList<String>) dataSnapshot.getValue();
+
                 TextView tv = (TextView) findViewById(R.id.textView);
-                tv.setText("From DB: " + value);
+                tv.setText("From DB: " + value.subList(0,1));
+
+                if (value != null) startFrontPage(value);
+
             }
 
             @Override
@@ -183,5 +188,14 @@ public class MainActivity extends AppCompatActivity {
                 Log.w("ERROR: ", "Failed to read value.", error.toException());
             }
         });
+    }
+    // Take the data to frontpage
+    public void startFrontPage(ArrayList dbData) {
+        Bundle extra = new Bundle();
+        extra.putStringArrayList("array", dbData);
+        Intent intent = new Intent(this, FrontPageActivity.class);
+        intent.putExtra("Data", dbData);
+
+        startActivity(intent);
     }
 }

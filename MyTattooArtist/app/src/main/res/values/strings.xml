@@ -17,4 +17,8 @@
     <string name="fb_login_protocol_scheme">fb578819726735017</string>
     <string name="sign_in_success">Signed in successfully!</string>
     <string name="sign_out_success">Signed out successfully!</string>
+    <string name="artist_image">artist_image</string>
+    <string name="name">name</string>
+    <string name="email">email</string>
+    <string name="phone">phone</string>
 </resources>
