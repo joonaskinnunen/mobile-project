@@ -51,11 +51,13 @@ public class BaseActivity  extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.myaccount:
+
                 // TODO add condition to differ user / artist profile
 
                 //"my account" will open intent for USER profile. -VS
                 Intent intent = new Intent(this, UserProfileActivity.class);
                 startActivity(intent);
+
                 return(true);
             case R.id.logout:
                 signOut();
