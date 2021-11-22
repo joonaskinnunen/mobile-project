@@ -51,7 +51,10 @@ public class BaseActivity  extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.myaccount:
                 // TODO accountActivity
-                // startActivity(new Intent(this, accountActivity));
+                //"my account" will open intent for USER profile. -VS
+                Intent intent = new Intent(this, ArtistProfileActivity.class);
+                startActivity(intent);
+
                 return(true);
             case R.id.logout:
                 signOut();
