@@ -15,6 +15,7 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
+import com.firebase.ui.auth.data.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -50,9 +51,11 @@ public class BaseActivity  extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.myaccount:
-                // TODO accountActivity
+
+                // TODO add condition to differ user / artist profile
+
                 //"my account" will open intent for USER profile. -VS
-                Intent intent = new Intent(this, ArtistProfileActivity.class);
+                Intent intent = new Intent(this, UserProfileActivity.class);
                 startActivity(intent);
 
                 return(true);
