@@ -2,8 +2,11 @@ package com.jk.mytattooartist;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultCallback;
@@ -20,7 +23,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,6 +42,14 @@ Every other class should extend this BaseActivity instead of AppCompatActivity.
 public class BaseActivity  extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
+    FirebaseDatabase database = FirebaseDatabase.getInstance("https://mytattooartist-d2298-default-rtdb.europe-west1.firebasedatabase.app/");
+    DatabaseReference myRef = database.getReference();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mAuth = FirebaseAuth.getInstance();
+    }
 
     // See: https://developer.android.com/training/basics/intents/result
     private final ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
@@ -58,6 +75,10 @@ public class BaseActivity  extends AppCompatActivity {
                 Intent intent = new Intent(this, UserProfileActivity.class);
                 startActivity(intent);
 
+                return(true);
+            case R.id.favourites:
+                //"my account" will open intent for USER profile. -VS
+                getFavourites();
                 return(true);
             case R.id.logout:
                 signOut();
@@ -136,6 +157,41 @@ public class BaseActivity  extends AppCompatActivity {
                     }
                 });
         // [END auth_fui_delete]
+    }
+
+    public void getFavourites() {
+        // Write a message to the database
+        FirebaseDatabase database = FirebaseDatabase.getInstance("https://mytattooartist-d2298-default-rtdb.europe-west1.firebasedatabase.app/");
+        DatabaseReference myRef = database.getReference();
+
+        // Read from the database
+        myRef.child("users").child("artists").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+
+                ArrayList<String> value = (ArrayList<String>) dataSnapshot.getValue();
+                startFavourites(value);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w("ERROR: ", "Failed to read value.", error.toException());
+            }
+        });
+
+    }
+
+    public void startFavourites(ArrayList dbData) {
+        Bundle extra = new Bundle();
+        extra.putStringArrayList("array", dbData);
+        Intent intent = new Intent(this, FavouriteActivity.class);
+        intent.putExtra("Data", dbData);
+
+        startActivity(intent);
     }
 
 

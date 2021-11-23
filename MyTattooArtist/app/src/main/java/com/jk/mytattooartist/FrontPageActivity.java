@@ -14,7 +14,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
-public class FrontPageActivity extends AppCompatActivity {
+public class FrontPageActivity extends BaseActivity {
 
     RecyclerView recyclerView;
 
