@@ -21,4 +21,9 @@
     <string name="name">name</string>
     <string name="email">email</string>
     <string name="phone">phone</string>
+    <string name="mail">mail</string>
+    <string name="upload">upload</string>
+    <string name="share">share</string>
+    <string name="todo">TODO</string>
+    <string name="choose_styles">Choose styles</string>
 </resources>

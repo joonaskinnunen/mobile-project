@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="MyTattooArtist/app/src/main/res/layout/artist_profile.xml" value="0.19384057971014493" />
+        <entry key="MyTattooArtist/app/src/main/res/layout/front_page.xml" value="0.20018115942028986" />
+        <entry key="MyTattooArtist/app/src/main/res/layout/user_profile.xml" value="0.10131712259371833" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_15" project-jdk-name="Android API 26 Platform" project-jdk-type="Android SDK" />
+</project>
