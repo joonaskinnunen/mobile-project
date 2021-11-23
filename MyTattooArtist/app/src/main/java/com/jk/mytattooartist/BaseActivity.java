@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.firebase.ui.auth.AuthUI;
@@ -49,6 +50,10 @@ public class BaseActivity  extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
+        ActionBar actionBar = getSupportActionBar();
+
+        // Showing the back button in action bar -JK
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     // See: https://developer.android.com/training/basics/intents/result
@@ -74,15 +79,24 @@ public class BaseActivity  extends AppCompatActivity {
                 //"my account" will open intent for USER profile. -VS
                 Intent intent = new Intent(this, UserProfileActivity.class);
                 startActivity(intent);
-
                 return(true);
+
+                // Opens a favourite page -JK
             case R.id.favourites:
-                //"my account" will open intent for USER profile. -VS
                 getFavourites();
                 return(true);
+
+                // Calls signOut function when logout selected -JK
             case R.id.logout:
                 signOut();
                 return(true);
+
+                // Open MainActivity when back button is pressed -JK
+            case android.R.id.home:
+                Intent homeIntent = new Intent(this, MainActivity.class);
+                startActivity(homeIntent);
+                finish();
+                super.onBackPressed();
         }
 
         return(super.onOptionsItemSelected(item));

@@ -2,6 +2,8 @@ package com.jk.mytattooartist;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -73,7 +75,7 @@ public class FavouriteActivity extends BaseActivity {
                 favouritesEmails = (ArrayList<String>) dataSnapshot.child(key).child("favourites").getValue();
 
                 // Check if the user has any favourite artists -JK
-                if (favouritesEmails.size() > 0) {
+                if (favouritesEmails != null) {
 
                     // Loop through all artists and compare artists emails to emails in favouritesEmails ArrayList -JK
                     for (int i = 0; i < favouritesEmails.size(); i++) {
@@ -90,6 +92,13 @@ public class FavouriteActivity extends BaseActivity {
                             }
                         }
                     }
+
+                    // Get the TextView and hide it when user has favourites -JK
+                    TextView noFavouritesTv = findViewById(R.id.noFavouritesTextView);
+                    noFavouritesTv.setVisibility(View.INVISIBLE);
+                } else {
+                    // Hide the RecyclerView when user has no favourites -JK
+                    recyclerView.setVisibility(View.INVISIBLE);
                 }
 
                 // Convert ArrayList to JsonArray and add data to the adapter -JK
