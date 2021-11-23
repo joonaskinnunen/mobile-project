@@ -104,6 +104,7 @@ public class BaseActivity  extends AppCompatActivity {
         Intent signInIntent = AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setAvailableProviders(providers)
+                .setIsSmartLockEnabled(false)
                 .build();
         signInLauncher.launch(signInIntent);
         // [END auth_fui_create_intent]
@@ -114,8 +115,6 @@ public class BaseActivity  extends AppCompatActivity {
         IdpResponse response = result.getIdpResponse();
         if (result.getResultCode() == RESULT_OK) {
             // Successfully signed in
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            //    Context context = getApplicationContext();
             Context context = getApplicationContext();
             String signInSuccessString = getString(R.string.sign_in_success);
             Toast toast = Toast.makeText(context, signInSuccessString, Toast.LENGTH_SHORT);
