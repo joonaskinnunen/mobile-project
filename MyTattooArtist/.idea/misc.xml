@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Joonas/Koodit/mobile-project/MyTattooArtist/app/src/main/res/layout/favourite.xml" value="0.1" />
+        <entry key="..\:/Users/Joonas/Koodit/mobile-project/MyTattooArtist/app/src/main/res/layout/front_page.xml" value="0.1" />
+        <entry key="..\:/Users/Joonas/Koodit/mobile-project/MyTattooArtist/app/src/main/res/menu/menu.xml" value="0.14722222222222223" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.15052083333333333" />
         <entry key="app/src/main/res/menu/menu.xml" value="0.16458333333333333" />
       </map>

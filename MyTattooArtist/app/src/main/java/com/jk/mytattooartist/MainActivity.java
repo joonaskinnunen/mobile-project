@@ -69,6 +69,9 @@ public class MainActivity extends BaseActivity {
             }
         });
     }
+
+
+
     // Take the data to frontpage
     public void startFrontPage(ArrayList dbData) {
         Bundle extra = new Bundle();

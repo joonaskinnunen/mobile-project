@@ -2,6 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/myaccount"
         android:title="@string/myaccount" />
+    <item android:id="@+id/favourites"
+        android:title="@string/favourites" />
     <item android:id="@+id/logout"
         android:title="@string/logout" />
 </menu>
