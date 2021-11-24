@@ -28,13 +28,22 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onStart() {
         super.onStart();
+        Log.d("1", "1");
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
-            Log.d("user", currentUser.getDisplayName());
-            Intent intent = new Intent(this, ArtistsFeedActivity.class);
-            startActivity(intent);
-        //    reload();
+            Log.d("2", "2");
+            if(getUserRole() != "") {
+                Log.d("3", "3");
+                Log.d("userRole", getUserRole());
+                Intent intent = new Intent(this, FrontPageActivity.class);
+                startActivity(intent);
+            } else {
+                Log.d("4", "4");
+                Log.d("userRole", getUserRole());
+                Intent intent = new Intent(this, FirstLoginActivity.class);
+                startActivity(intent);
+            }
         } else {
             createSignInIntent();
         }
@@ -58,7 +67,7 @@ public class MainActivity extends BaseActivity {
                 TextView tv = (TextView) findViewById(R.id.textView);
                 tv.setText("From DB: " + value.subList(0,1));
 
-                if (value != null) startFrontPage(value);
+            //    if (value != null) startFrontPage(value);
 
             }
 
