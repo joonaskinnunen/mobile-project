@@ -22,34 +22,31 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
-        testDB();
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Log.d("1", "1");
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
-            Log.d("2", "2");
-            if(getUserRole() != "") {
-                Log.d("3", "3");
-                Log.d("userRole", getUserRole());
-                Intent intent = new Intent(this, FrontPageActivity.class);
-                startActivity(intent);
-            } else {
-                Log.d("4", "4");
-                Log.d("userRole", getUserRole());
+            // Check if user is new and start FirstLoginActivity -JK
+            if(currentUser.getMetadata().getCreationTimestamp() == currentUser.getMetadata().getLastSignInTimestamp()) {
                 Intent intent = new Intent(this, FirstLoginActivity.class);
                 startActivity(intent);
             }
-        } else {
+            // If user is not new, call getDataFromDB() -JK
+            else {
+                getDataFromDB();
+            }
+        }
+        // If user is not signed in then call createSignInIntent() -JK
+        else {
             createSignInIntent();
         }
     }
 
-    public void testDB() {
+    public void getDataFromDB() {
         // Write a message to the database
         FirebaseDatabase database = FirebaseDatabase.getInstance("https://mytattooartist-d2298-default-rtdb.europe-west1.firebasedatabase.app/");
         DatabaseReference myRef = database.getReference();
@@ -64,10 +61,10 @@ public class MainActivity extends BaseActivity {
 
                 ArrayList<String> value = (ArrayList<String>) dataSnapshot.getValue();
 
-                TextView tv = (TextView) findViewById(R.id.textView);
+                TextView tv = findViewById(R.id.textView);
                 tv.setText("From DB: " + value.subList(0,1));
 
-            //    if (value != null) startFrontPage(value);
+                if (value != null) startFrontPage(value);
 
             }
 

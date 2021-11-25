@@ -44,19 +44,18 @@ public class BaseActivity  extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://mytattooartist-d2298-default-rtdb.europe-west1.firebasedatabase.app/");
-    DatabaseReference myRef = database.getReference();
     final String[] userRole = {""};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
+        if(mAuth.getCurrentUser() != null) getUserRoleFromDB(mAuth.getCurrentUser().getEmail());
         ActionBar actionBar = getSupportActionBar();
 
         // Showing the back button in action bar -JK
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        if(mAuth.getCurrentUser() != null) getUserRoleFromDB(mAuth.getCurrentUser().getEmail());
     }
 
     // See: https://developer.android.com/training/basics/intents/result
