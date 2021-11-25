@@ -44,16 +44,18 @@ public class BaseActivity  extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://mytattooartist-d2298-default-rtdb.europe-west1.firebasedatabase.app/");
-    DatabaseReference myRef = database.getReference();
+    final String[] userRole = {""};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
+        if(mAuth.getCurrentUser() != null) getUserRoleFromDB(mAuth.getCurrentUser().getEmail());
         ActionBar actionBar = getSupportActionBar();
 
         // Showing the back button in action bar -JK
         actionBar.setDisplayHomeAsUpEnabled(true);
+
     }
 
     // See: https://developer.android.com/training/basics/intents/result
@@ -127,8 +129,8 @@ public class BaseActivity  extends AppCompatActivity {
     // [START auth_fui_result]
     private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
         IdpResponse response = result.getIdpResponse();
+        // Successfully signed in
         if (result.getResultCode() == RESULT_OK) {
-            // Successfully signed in
             Context context = getApplicationContext();
             String signInSuccessString = getString(R.string.sign_in_success);
             Toast toast = Toast.makeText(context, signInSuccessString, Toast.LENGTH_SHORT);
@@ -207,5 +209,46 @@ public class BaseActivity  extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void getUserRoleFromDB(String email) {
+        DatabaseReference artistUserRef = FirebaseDatabase.getInstance().getReference().child("users").child("artists");
+        artistUserRef.orderByChild("email").equalTo(email).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Log.d("datasnapShot artists", dataSnapshot.toString());
+                    updateUserRoleCB("artist");
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value -JK
+                Log.w("ERROR: ", "Failed to read value.", error.toException());
+            }
+        });
 
+        DatabaseReference clientUserRef = FirebaseDatabase.getInstance().getReference().child("users").child("clients");
+        clientUserRef.orderByChild("email").equalTo(email).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    updateUserRoleCB("client");
+                    Log.d("datasnapShot clients", dataSnapshot.toString());
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value -JK
+                Log.w("ERROR: ", "Failed to read value.", error.toException());
+            }
+        });
+    }
+
+    public void updateUserRoleCB(String role) {
+        userRole[0] = role;
+        Log.d("userRole: ", userRole[0]);
+    }
+
+    public String getUserRole() {
+        return userRole[0];
+    }
 }
