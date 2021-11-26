@@ -3,6 +3,7 @@ package com.jk.mytattooartist;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,6 +21,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
 
     private JsonArray localDataSet;
     private Gson gson = new Gson();
+    private Boolean favorite = false;
 
     /**
      * Provide a reference to the type of views that you are using
@@ -30,6 +32,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         private final TextView emailTextView;
         private final TextView phoneTextView;
         private final ImageView imageView;
+        private final ImageButton favoriteButton;
 
         public ViewHolder(View view) {
             super(view);
@@ -39,6 +42,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
             emailTextView = view.findViewById(R.id.emailTextView);
             phoneTextView = view.findViewById(R.id.phoneTextView);
             imageView = view.findViewById(R.id.imageView);
+            favoriteButton = view.findViewById(R.id.favoriteButton);
         }
 
         public TextView getNameTextView() {
@@ -52,6 +56,9 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         }
         public ImageView getImageView() {
             return imageView;
+        }
+        public ImageButton getFavoriteButton() {
+            return favoriteButton;
         }
     }
 
@@ -96,6 +103,19 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         viewHolder.getNameTextView().setText(firstName + " " + lastName);
         viewHolder.getEmailTextView().setText(email);
         viewHolder.getPhoneTextView().setText(phone);
+
+        viewHolder.getFavoriteButton().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!favorite) {
+                    viewHolder.getFavoriteButton().setImageResource(R.drawable.ic_star);
+                    favorite = true;
+                } else {
+                    viewHolder.getFavoriteButton().setImageResource(R.drawable.ic_star_border_black);
+                    favorite = false;
+                }
+            }
+        });
     }
 
     // Return the size of your dataset (invoked by the layout manager)
