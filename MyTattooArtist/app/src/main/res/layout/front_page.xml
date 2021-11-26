@@ -7,19 +7,8 @@
     android:layout_height="match_parent"
     tools:context=".FrontPageActivity">
 
-    <TextView
-        android:id="@+id/titleFab3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:text="@string/choose_styles"
-        android:layout_alignLeft="@id/fab"
-        android:layout_margin="@dimen/fab_margin"
-        android:visibility="visible" />
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab3"
+        android:id="@+id/fabStyles"
         android:layout_width="@dimen/fab_item_size"
         android:layout_height="@dimen/fab_item_size"
         android:layout_alignParentEnd="true"
@@ -33,7 +22,7 @@
         tools:ignore="DuplicateClickableBoundsCheck" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab2"
+        android:id="@+id/fabGender"
         android:layout_width="@dimen/fab_item_size"
         android:layout_height="@dimen/fab_item_size"
         app:fabCustomSize="@dimen/fab_item_size"
@@ -43,7 +32,7 @@
         app:srcCompat="@drawable/ic_person" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab1"
+        android:id="@+id/fabDistance"
         android:layout_width="@dimen/fab_item_size"
         android:layout_height="@dimen/fab_item_size"
         app:fabCustomSize="@dimen/fab_item_size"
@@ -53,7 +42,7 @@
         app:srcCompat="@android:drawable/ic_menu_compass" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/fabFilters"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
