@@ -1,18 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/constraintLayout"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/relativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".FrontPageActivity">
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabStyles"
+        android:layout_width="@dimen/fab_item_size"
+        android:layout_height="@dimen/fab_item_size"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="@dimen/fab_item_margin"
+        android:layout_marginTop="@dimen/fab_item_margin"
+        android:layout_marginEnd="@dimen/fab_item_margin"
+        android:layout_marginBottom="@dimen/fab_item_margin"
+        app:fabCustomSize="@dimen/fab_item_size"
+        app:srcCompat="@drawable/ic_brush"
+        tools:ignore="DuplicateClickableBoundsCheck" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabGender"
+        android:layout_width="@dimen/fab_item_size"
+        android:layout_height="@dimen/fab_item_size"
+        app:fabCustomSize="@dimen/fab_item_size"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="@dimen/fab_item_margin"
+        app:srcCompat="@drawable/ic_person" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabDistance"
+        android:layout_width="@dimen/fab_item_size"
+        android:layout_height="@dimen/fab_item_size"
+        app:fabCustomSize="@dimen/fab_item_size"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="@dimen/fab_item_margin"
+        app:srcCompat="@android:drawable/ic_menu_compass" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabFilters"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="@dimen/fab_margin"
+        app:srcCompat="@android:drawable/ic_menu_manage" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_height="match_parent">
+
+    </androidx.recyclerview.widget.RecyclerView>
+</RelativeLayout>

@@ -21,6 +21,17 @@
     <string name="name">name</string>
     <string name="email">email</string>
     <string name="phone">phone</string>
+    <string name="filter">Filter your feed</string>
+    <string name="styleTitle">Choose your styles:</string>
+    <string name="textButton">Click this</string>
+    <string name="black_white"><![CDATA[Black & White]]></string>
+    <string name="watercolor">Watercolor</string>
+    <string name="old_school">Old school</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="dont_care">Don\'t care</string>
+    <string name="personTitle">Pick a gender:</string>
+    <string name="distanceTitle">Set distance range:</string>
     <string name="favourites">Favourites</string>
     <string name="no_favourites">You have no favourite artists yet</string>
     <string name="welcome">Welcome to MyTattooArtist!</string>
