@@ -36,7 +36,22 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".ArtistsFeedActivity" >
+        <activity android:name=".FavouriteActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".UserProfileActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ArtistProfileActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".FirstLoginActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.DEFAULT" />
             </intent-filter>

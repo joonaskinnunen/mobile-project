@@ -21,10 +21,6 @@
     <string name="name">name</string>
     <string name="email">email</string>
     <string name="phone">phone</string>
-    <string name="mail">mail</string>
-    <string name="upload">upload</string>
-    <string name="share">share</string>
-    <string name="todo">TODO</string>
     <string name="filter">Filter your feed</string>
     <string name="styleTitle">Choose your styles:</string>
     <string name="textButton">Click this</string>
@@ -36,4 +32,11 @@
     <string name="dont_care">Don\'t care</string>
     <string name="personTitle">Pick a gender:</string>
     <string name="distanceTitle">Set distance range:</string>
+    <string name="favourites">Favourites</string>
+    <string name="no_favourites">You have no favourite artists yet</string>
+    <string name="welcome">Welcome to MyTattooArtist!</string>
+    <string name="choose_role">Choose your user role:</string>
+    <string name="client_radiobutton">I\'m interested in Tattoos</string>
+    <string name="artist_radiobutton">I\'m an Tattoo Artist</string>
+    <string name="choose_role_button">Submit</string>
 </resources>

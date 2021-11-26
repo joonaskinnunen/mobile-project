@@ -24,7 +24,6 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mAuth = FirebaseAuth.getInstance();
-        //testDB();
     }
 
     @Override
@@ -33,18 +32,26 @@ public class MainActivity extends BaseActivity {
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
-            Log.d("user", currentUser.getDisplayName());
-            testDB();
-            /*Intent intent = new Intent(this, FrontPageActivity.class);
-            startActivity(intent);*/
-        //    reload();
-        } else {
+
+            // Check if user is new and start FirstLoginActivity -JK
+            if(currentUser.getMetadata().getCreationTimestamp() == currentUser.getMetadata().getLastSignInTimestamp()) {
+                Intent intent = new Intent(this, FirstLoginActivity.class);
+                startActivity(intent);
+            }
+            // If user is not new, call getDataFromDB() -JK
+            else {
+                getDataFromDB();
+            }
+        }
+        // If user is not signed in then call createSignInIntent() -JK
+        else {
             createSignInIntent();
         }
     }
 
-    public void testDB() {
-        // Get database instance and reference
+    public void getDataFromDB() {
+      
+        // Write a message to the database
         FirebaseDatabase database = FirebaseDatabase.getInstance("https://mytattooartist-d2298-default-rtdb.europe-west1.firebasedatabase.app/");
         DatabaseReference myRef = database.getReference();
 
@@ -73,6 +80,7 @@ public class MainActivity extends BaseActivity {
     }
     // Take the data to frontpage activity
     public void startFrontPage(ArrayList<String> dbData) {
+
         Bundle extra = new Bundle();
         extra.putStringArrayList("array", dbData);
         Intent intent = new Intent(this, FrontPageActivity.class);

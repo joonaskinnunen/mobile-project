@@ -4,7 +4,9 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/Joonas/Koodit/mobile-project/MyTattooArtist/app/src/main/res/layout/artist_item.xml" value="0.22" />
-        <entry key="..\:/Users/Joonas/Koodit/mobile-project/MyTattooArtist/app/src/main/res/layout/favourite.xml" value="0.22" />
+        <entry key="..\:/Users/Joonas/Koodit/mobile-project/MyTattooArtist/app/src/main/res/layout/artists_feed.xml" value="0.16893115942028986" />
+        <entry key="..\:/Users/Joonas/Koodit/mobile-project/MyTattooArtist/app/src/main/res/layout/favourite.xml" value="0.25" />
+        <entry key="..\:/Users/Joonas/Koodit/mobile-project/MyTattooArtist/app/src/main/res/layout/first_login.xml" value="0.25" />
         <entry key="..\:/Users/Joonas/Koodit/mobile-project/MyTattooArtist/app/src/main/res/layout/front_page.xml" value="0.1" />
         <entry key="..\:/Users/Joonas/Koodit/mobile-project/MyTattooArtist/app/src/main/res/layout/user_profile.xml" value="0.19384057971014493" />
         <entry key="..\:/Users/Joonas/Koodit/mobile-project/MyTattooArtist/app/src/main/res/menu/menu.xml" value="0.14722222222222223" />
