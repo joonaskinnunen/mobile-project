@@ -1,5 +1,7 @@
 package com.jk.mytattooartist;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +9,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -22,6 +25,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
     private JsonArray localDataSet;
     private Gson gson = new Gson();
     private Boolean favorite = false;
+    Context context;
 
     /**
      * Provide a reference to the type of views that you are using
@@ -33,6 +37,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         private final TextView phoneTextView;
         private final ImageView imageView;
         private final ImageButton favoriteButton;
+        private final ConstraintLayout artistInfo;
 
         public ViewHolder(View view) {
             super(view);
@@ -43,6 +48,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
             phoneTextView = view.findViewById(R.id.phoneTextView);
             imageView = view.findViewById(R.id.imageView);
             favoriteButton = view.findViewById(R.id.favoriteButton);
+            artistInfo = view.findViewById(R.id.artistInfoLayout);
         }
 
         public TextView getNameTextView() {
@@ -60,6 +66,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         public ImageButton getFavoriteButton() {
             return favoriteButton;
         }
+        public ConstraintLayout getArtistInfo() { return artistInfo; }
     }
 
     /**
@@ -116,6 +123,14 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
                 }
             }
         });
+
+        viewHolder.getArtistInfo().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(v.getContext(), ArtistProfileActivity.class);
+                v.getContext().startActivity(intent);
+            }
+        });
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -123,4 +138,5 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
     public int getItemCount() {
         return localDataSet.size();
     }
+
 }
