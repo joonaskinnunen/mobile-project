@@ -1,7 +1,7 @@
 package com.jk.mytattooartist;
 
-import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +13,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -22,10 +24,12 @@ import org.json.JSONException;
 
 public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder> {
 
+    FirebaseDatabase database = FirebaseDatabase.getInstance("https://mytattooartist-d2298-default-rtdb.europe-west1.firebasedatabase.app/");
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
     private JsonArray localDataSet;
     private Gson gson = new Gson();
     private Boolean favorite = false;
-    Context context;
 
     /**
      * Provide a reference to the type of views that you are using
@@ -127,7 +131,10 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         viewHolder.getArtistInfo().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Bundle extra = new Bundle();
+                extra.putString("artist", gson.toJson(artist));
                 Intent intent = new Intent(v.getContext(), ArtistProfileActivity.class);
+                intent.putExtra("extra", extra);
                 v.getContext().startActivity(intent);
             }
         });
