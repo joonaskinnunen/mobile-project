@@ -36,18 +36,21 @@
                 android:id="@+id/cbBlackWhite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:buttonTint="@color/burgundy"
                 android:text="@string/black_white" />
 
             <CheckBox
                 android:id="@+id/cbWaterColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:buttonTint="@color/burgundy"
                 android:text="@string/watercolor" />
 
             <CheckBox
                 android:id="@+id/cbOldSchool"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:buttonTint="@color/burgundy"
                 android:text="@string/old_school" />
 
         </LinearLayout>

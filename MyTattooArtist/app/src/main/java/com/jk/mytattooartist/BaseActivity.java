@@ -56,6 +56,11 @@ public class BaseActivity  extends AppCompatActivity {
         // Showing the back button in action bar -JK
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        //Actionbar Logo
+        actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setLogo(R.drawable.ic_logo);
+        actionBar.setDisplayUseLogoEnabled(true);
+
     }
 
     // See: https://developer.android.com/training/basics/intents/result

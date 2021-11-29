@@ -34,18 +34,21 @@
                 android:id="@+id/cbMale"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:buttonTint="@color/burgundy"
                 android:text="@string/male" />
 
             <CheckBox
                 android:id="@+id/cbFemale"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:buttonTint="@color/burgundy"
                 android:text="@string/female" />
 
             <CheckBox
                 android:id="@+id/cbDontCare"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:buttonTint="@color/burgundy"
                 android:text="@string/dont_care" />
 
         </LinearLayout>
