@@ -25,10 +25,13 @@
         <entry key="app/src/main/res/drawable/ic_star_border_black.xml" value="0.22447916666666667" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.15052083333333333" />
         <entry key="app/src/main/res/layout/artist_item.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/artist_profile.xml" value="0.16458333333333333" />
         <entry key="app/src/main/res/layout/favourite.xml" value="0.20833333333333334" />
+        <entry key="app/src/main/res/layout/first_login.xml" value="0.16458333333333333" />
         <entry key="app/src/main/res/layout/popup_window.xml" value="0.20833333333333334" />
         <entry key="app/src/main/res/layout/popup_window_distance.xml" value="0.20833333333333334" />
         <entry key="app/src/main/res/layout/popup_window_person.xml" value="0.20833333333333334" />
+        <entry key="app/src/main/res/layout/user_ui_for_artist.xml" value="0.16458333333333333" />
         <entry key="app/src/main/res/menu/menu.xml" value="0.16458333333333333" />
         <entry key="app/src/main/res/menu/menu_filter.xml" value="0.20833333333333334" />
       </map>
