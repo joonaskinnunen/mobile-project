@@ -133,7 +133,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
             public void onClick(View v) {
                 Bundle extra = new Bundle();
                 extra.putString("artist", gson.toJson(artist));
-                Intent intent = new Intent(v.getContext(), ArtistProfileActivity.class);
+                Intent intent = new Intent(v.getContext(), UserUiForArtistActivity.class);
                 intent.putExtra("extra", extra);
                 v.getContext().startActivity(intent);
             }
