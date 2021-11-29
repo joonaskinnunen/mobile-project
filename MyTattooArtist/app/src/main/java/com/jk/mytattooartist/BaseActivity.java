@@ -6,10 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -19,11 +17,9 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
-import com.firebase.ui.auth.data.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -75,13 +71,13 @@ public class BaseActivity  extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.myaccount:
-
-                // TODO add condition to differ user / artist profile
-
-                //"my account" will open intent for USER profile. -VS
-                Intent intent = new Intent(this, UserProfileActivity.class);
+                Intent intent = new Intent(this, ArtistProfileActivity.class);
                 startActivity(intent);
                 return(true);
+                //"my account" will check if current user is client or artist and opens corresponding activity (profile) -VS,
+
+                //toMyAccount();
+                //return(true);
 
                 // Opens a favourite page -JK
             case R.id.favourites:
@@ -172,6 +168,20 @@ public class BaseActivity  extends AppCompatActivity {
                     }
                 });
         // [END auth_fui_delete]
+    }
+
+    public void toMyAccount(){
+        //"my account" will check if current user is client or artist and opens corresponding activity (profile) -VS
+        if (getUserRole()=="artist")
+        {
+            Intent intent = new Intent(this, ArtistProfileActivity.class);
+            startActivity(intent);
+        }
+        else if (getUserRole()=="client")
+        {
+            Intent intent = new Intent(this, UserProfileActivity.class);
+            startActivity(intent);
+        }
     }
 
     public void getFavourites() {
