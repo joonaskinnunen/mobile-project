@@ -32,16 +32,7 @@ public class MainActivity extends BaseActivity {
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
-
-            // Check if user is new and start FirstLoginActivity -JK
-            if(currentUser.getMetadata().getCreationTimestamp() == currentUser.getMetadata().getLastSignInTimestamp()) {
-                Intent intent = new Intent(this, FirstLoginActivity.class);
-                startActivity(intent);
-            }
-            // If user is not new, call getDataFromDB() -JK
-            else {
-                getDataFromDB();
-            }
+            getDataFromDB();
         }
         // If user is not signed in then call createSignInIntent() -JK
         else {
