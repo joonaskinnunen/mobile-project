@@ -39,4 +39,5 @@
     <string name="client_radiobutton">I\'m interested in Tattoos</string>
     <string name="artist_radiobutton">I\'m an Tattoo Artist</string>
     <string name="choose_role_button">Submit</string>
+    <string name="userRoleSelectionError">You must select a user role!</string>
 </resources>

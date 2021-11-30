@@ -58,6 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:backgroundTint="@color/burgundy"
+        android:onClick="onRoleSelected"
         android:text="@string/choose_role_button"
         android:textColor="@color/light_gray"
         app:layout_constraintEnd_toEndOf="parent"

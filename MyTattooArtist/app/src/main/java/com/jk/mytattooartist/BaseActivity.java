@@ -41,6 +41,7 @@ public class BaseActivity  extends AppCompatActivity {
     private FirebaseAuth mAuth;
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://mytattooartist-d2298-default-rtdb.europe-west1.firebasedatabase.app/");
     final String[] userRole = {""};
+    boolean isNewUser = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,10 +133,22 @@ public class BaseActivity  extends AppCompatActivity {
         IdpResponse response = result.getIdpResponse();
         // Successfully signed in
         if (result.getResultCode() == RESULT_OK) {
+            Log.d("isNewUserOnSignInResult", String.valueOf(response.isNewUser()));
+
+            // Check if user is new and save boolean to the isNewUser variable -JK
+            isNewUser = response.isNewUser();
+
             Context context = getApplicationContext();
             String signInSuccessString = getString(R.string.sign_in_success);
+            // Show Toast when signIn is successful -JK
             Toast toast = Toast.makeText(context, signInSuccessString, Toast.LENGTH_SHORT);
             toast.show();
+
+            // If user is new, start FirstLoginActivity -JK
+            if(isNewUser) {
+                Intent intent = new Intent(this, FirstLoginActivity.class);
+                startActivity(intent);
+            }
             // ...
         } else {
             // Sign in failed. If response is null the user canceled the
