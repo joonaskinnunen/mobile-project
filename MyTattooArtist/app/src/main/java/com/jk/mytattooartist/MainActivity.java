@@ -38,6 +38,9 @@ public class MainActivity extends BaseActivity {
         else {
             createSignInIntent();
         }
+
+    /*    Intent intent = new Intent(this, FirstLoginActivity.class);
+        startActivity(intent); */
     }
 
     public void getDataFromDB() {

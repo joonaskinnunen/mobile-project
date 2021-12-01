@@ -52,6 +52,15 @@
             android:text="@string/artist_radiobutton" />
     </RadioGroup>
 
+    <fragment android:id="@+id/autocomplete_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup"
+        />
+
     <Button
         android:id="@+id/selectRoleButton"
         android:layout_width="wrap_content"
@@ -63,5 +72,5 @@
         android:textColor="@color/light_gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+        app:layout_constraintTop_toBottomOf="@+id/autocomplete_fragment" />
 </androidx.constraintlayout.widget.ConstraintLayout>
