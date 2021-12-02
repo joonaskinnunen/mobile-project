@@ -18,6 +18,7 @@ import androidx.appcompat.app.ActionBar;
 import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,6 +35,8 @@ public class FirstLoginActivity extends BaseActivity {
     RadioGroup radioGroup;
     RadioButton artistRadioButton;
     RadioButton clientRadioButton;
+
+    String selectedLocation = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +75,14 @@ public class FirstLoginActivity extends BaseActivity {
         // Specify the types of place data to return -JK
         autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
 
+        autocompleteFragment.setTypeFilter(TypeFilter.CITIES);
+
         // Set up a PlaceSelectionListener to handle the response -JK
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(@NonNull Place place) {
+
+                selectedLocation = place.getName();
                 // TODO: Get info about the selected place.
                 Log.i("PLACEAPI", "Place: " + place.getName() + ", " + place.getId());
             }
@@ -108,19 +115,27 @@ public class FirstLoginActivity extends BaseActivity {
         // Get logged in FirebaseUser -JK
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
 
-        // Create new object from User class -JK
-        User user = new User(firebaseUser.getEmail(), firebaseUser.getDisplayName());
+        // Check if user has selected location -JK
+        if(selectedLocation != null) {
+
+            // Create new object from User class -JK
+            User user = new User(firebaseUser.getEmail(), firebaseUser.getDisplayName(), selectedLocation);
 
         // If user selected client as user role, add new user to the database path 'users/clients' -JK
         if(selectedRadioButtonId == clientRadioButton.getId()) {
+            // Store user information to the DB  -JK
             myRef.child("users").child("clients").child(mAuth.getCurrentUser().getUid()).setValue(user);
+
+            // Create Intent and go back to MainActivity -JK
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         }
 
         // If user selected artist as user role, add new user to the database path 'users/artists' -JK
         else if(selectedRadioButtonId == artistRadioButton.getId()) {
+            // Store user information to the DB  -JK
             myRef.child("users").child("artists").child(mAuth.getCurrentUser().getUid()).setValue(user);
+            // Create Intent and go back to MainActivity -JK
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
 
@@ -131,6 +146,13 @@ public class FirstLoginActivity extends BaseActivity {
             Toast toast = Toast.makeText(this, R.string.userRoleSelectionError, Toast.LENGTH_SHORT);
             toast.show();
         }
+        }
+
+        // If user didn't select any location, show Toast -JK
+        else {
+            Toast toast = Toast.makeText(this, R.string.locationSelectionError, Toast.LENGTH_SHORT);
+            toast.show();
+        }
 
     }
 
@@ -139,10 +161,12 @@ public class FirstLoginActivity extends BaseActivity {
 
         public String email;
         public String name;
+        public String city;
 
-        public User(String email, String name) {
+        public User(String email, String name, String city) {
             this.email = email;
             this.name = name;
+            this.city = city;
 
         }
 
