@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.TypeFilter;
@@ -35,15 +36,16 @@ public class FirstLoginActivity extends BaseActivity {
     RadioGroup radioGroup;
     RadioButton artistRadioButton;
     RadioButton clientRadioButton;
-
     String selectedLocation = null;
+    LatLng selectedLatLng = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.first_login);
 
-        // Get Firebase instance to the variable
+        // Get Firebase instance to the variable -JK
         mAuth = FirebaseAuth.getInstance();
 
         // Get views to variables -JK
@@ -66,6 +68,7 @@ public class FirstLoginActivity extends BaseActivity {
         // Save app metadata to bundle variable -JK
         Bundle bundle = app.metaData;
 
+        // Initialize places -JK
         Places.initialize(getApplicationContext(), bundle.getString("com.jk.mytattooartist.API_KEY"));
 
         // Initialize the AutocompleteSupportFragment -JK
@@ -73,8 +76,9 @@ public class FirstLoginActivity extends BaseActivity {
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 
         // Specify the types of place data to return -JK
-        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.LAT_LNG, Place.Field.ID, Place.Field.NAME));
 
+        // Filter places and return only cities -JK
         autocompleteFragment.setTypeFilter(TypeFilter.CITIES);
 
         // Set up a PlaceSelectionListener to handle the response -JK
@@ -82,15 +86,17 @@ public class FirstLoginActivity extends BaseActivity {
             @Override
             public void onPlaceSelected(@NonNull Place place) {
 
+                Log.d("LatLng", String.valueOf(place.getLatLng()));
+
+                // Store place name and LatLng location to variables -JK
                 selectedLocation = place.getName();
-                // TODO: Get info about the selected place.
+                selectedLatLng = place.getLatLng();
                 Log.i("PLACEAPI", "Place: " + place.getName() + ", " + place.getId());
             }
 
 
             @Override
             public void onError(@NonNull Status status) {
-                // TODO: Handle the error.
                 Log.i("PLACEAPI", "An error occurred: " + status);
             }
         });
@@ -119,7 +125,7 @@ public class FirstLoginActivity extends BaseActivity {
         if(selectedLocation != null) {
 
             // Create new object from User class -JK
-            User user = new User(firebaseUser.getEmail(), firebaseUser.getDisplayName(), selectedLocation);
+            User user = new User(firebaseUser.getEmail(), firebaseUser.getDisplayName(), selectedLocation, selectedLatLng);
 
         // If user selected client as user role, add new user to the database path 'users/clients' -JK
         if(selectedRadioButtonId == clientRadioButton.getId()) {
@@ -162,11 +168,13 @@ public class FirstLoginActivity extends BaseActivity {
         public String email;
         public String name;
         public String city;
+        public LatLng latLng;
 
-        public User(String email, String name, String city) {
+        public User(String email, String name, String city, LatLng latLng) {
             this.email = email;
             this.name = name;
             this.city = city;
+            this.latLng = latLng;
 
         }
 
