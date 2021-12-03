@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Jasmiina/AndroidStudioProjects/mobile-project/MyTattooArtist/app/src/main/res/drawable/background_splash.xml" value="0.28055555555555556" />
+        <entry key="..\:/Users/Jasmiina/AndroidStudioProjects/mobile-project/MyTattooArtist/app/src/main/res/drawable/gradient_color.xml" value="0.28055555555555556" />
         <entry key="..\:/Users/Jasmiina/AndroidStudioProjects/mobile-project/MyTattooArtist/app/src/main/res/drawable/ic_star_border_black.xml" value="0.22135416666666666" />
         <entry key="..\:/Users/Jasmiina/AndroidStudioProjects/mobile-project/MyTattooArtist/app/src/main/res/layout/activity_main.xml" value="0.2957427536231884" />
         <entry key="..\:/Users/Jasmiina/AndroidStudioProjects/mobile-project/MyTattooArtist/app/src/main/res/layout/artist_item.xml" value="0.20520833333333333" />
