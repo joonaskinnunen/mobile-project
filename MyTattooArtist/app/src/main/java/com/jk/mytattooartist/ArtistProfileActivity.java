@@ -35,7 +35,9 @@ public class ArtistProfileActivity extends BaseActivity {
     private String checkUrl ="https://mytattooartist-d2298.firebaseapp.com/__/auth/handler?code=";
     private String authCode;
     private String igAppSecret = "1a302a11f9d6b0f0906987353193ee60";
+    private String userID;
     private String token;
+    private String longLiveToken;
     private boolean codeReceived = false;
 
     @Override
@@ -103,6 +105,7 @@ public class ArtistProfileActivity extends BaseActivity {
                     if(codeReceived==true){
                         Log.i("VALUE: ", "codeReceived == true.");
                         requestAccessToken(authCode);
+
                     }
                     else
                         Log.i("VALUE: ", "codeReceived == false.");
@@ -121,10 +124,15 @@ public class ArtistProfileActivity extends BaseActivity {
         StringRequest request = new StringRequest(Request.Method.POST, postUrl, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
+                //TODO: condition if fails to get token -> "error_type"
 
                 //"response" is Access_token + UserID in JSON format -VS
-                //TODO: Access_token + UserID must be further processed and used to retrieve IG media.
                 Log.i("Success Response = ", response);
+                token = response.substring(response.indexOf("\"access_token\": \"")+17,response.indexOf("\","));
+                userID= response.substring(response.indexOf("\"user_id\":")+11,response.length()-1);
+                Log.i("token = ", token);
+                Log.i("userID = ", userID);
+                requestLongLiveToken(igAppSecret,token);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -148,13 +156,69 @@ public class ArtistProfileActivity extends BaseActivity {
     }
 
 
+
+    public void requestLongLiveToken(final String appSecret,final String token) {
+        String postUrl = "https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret="+appSecret+"&access_token="+token;
+        StringRequest request = new StringRequest(Request.Method.GET, postUrl, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.i("Success Response = ", response);
+                longLiveToken = response.substring(response.indexOf("\"access_token\":\"")+16,response.indexOf("\",\"token_type\""));
+
+
+                //Add current users UserID & access_token to firebase as a child of a current userUID -VS
+                MediaAccess user = new MediaAccess(userID,longLiveToken);
+
+                //TODO: remove when logged in as artist.
+                //database.getReference().child("users").child("artists").child(mAuth.getCurrentUser().getUid()).child("instagram").setValue(user);
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Error Response = ", error.toString());
+            }
+        });
+
+        Volley.newRequestQueue(this).add(request);
+    }
+
+
+
+    //TODO: refresh longlived token every 60 days.
+
+    //renewLongLiveToken(database.getReference().child("users").child("artists").child(mAuth.getCurrentUser().getUid()).child("instagram").get("access_token"););
+    /*public void renewLongLiveToken(final String token) {
+        String postUrl = "https://graph.instagram.com/refresh_access_token ?grant_type=ig_refresh_token&access_token="+token;
+        StringRequest request = new StringRequest(Request.Method.GET, postUrl, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.i("Success Response = ", response);
+                longLiveToken = response.substring(response.indexOf("\"access_token\":\"")+16,response.indexOf("\",\"token_type\""));
+
+
+                //renew current users UserID & access_token to firebase as a child of a current userUID -VS
+                MediaAccess user = new MediaAccess(userID,longLiveToken);
+                //database.getReference().child("users").child("artists").child(mAuth.getCurrentUser().getUid()).child("instagram").setValue(user);
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Error Response = ", error.toString());
+            }
+        });
+
+        Volley.newRequestQueue(this).add(request);
+    }*/
+
+
     public void artistInfo() {
 
         //TODO:use proper UID
         String user = "0";
 
         // Get references to the database -JM
-        FirebaseDatabase database = FirebaseDatabase.getInstance("https://mytattooartist-d2298-default-rtdb.europe-west1.firebasedatabase.app");
         DatabaseReference myRef = database.getReference();
         DatabaseReference users = myRef.child("users");
         DatabaseReference artists = users.child("artists");
@@ -258,5 +322,17 @@ public class ArtistProfileActivity extends BaseActivity {
                 Log.w("ERROR: ", "Failed to read value.", error.toException());
             }
         });
+    }
+
+    //Static class for adding instagram userID and token to firebase as a child of a current user. -VS
+    public static class MediaAccess {
+
+        public String userID;
+        public String access_token;
+
+        public MediaAccess(String userID, String access_token) {
+            this.userID = userID;
+            this.access_token = access_token;
+        }
     }
 }

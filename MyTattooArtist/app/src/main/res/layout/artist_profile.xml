@@ -118,11 +118,11 @@
 
             <ImageView
                 android:id="@+id/imageView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="200dp"
+                android:layout_width="124dp"
+                android:layout_height="124dp"
                 android:layout_marginTop="60dp"
-                app:layout_constraintLeft_toRightOf="@+id/profileNameTag"
+                android:layout_marginEnd="20dp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:srcCompat="@tools:sample/avatars" />
 
@@ -135,6 +135,22 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/profileSocialsTag"
                 />
+
+            <Button
+                android:id="@+id/connectToInstagramButton"
+                android:layout_width="118dp"
+                android:layout_height="58dp"
+                android:layout_marginEnd="30dp"
+                android:fontFamily="serif-monospace"
+                android:onClick="ConnectToInstagramClicked"
+                android:text="Connect to Instagram"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/instagramFeedWebView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
