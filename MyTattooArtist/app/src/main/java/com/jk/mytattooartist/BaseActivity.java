@@ -1,5 +1,6 @@
 package com.jk.mytattooartist;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /*
 BaseActivity that holds onCreateOptionsMenu and onOptionsItemSelected.
@@ -214,7 +216,7 @@ public class BaseActivity  extends AppCompatActivity {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
 
-                ArrayList<String> value = (ArrayList<String>) dataSnapshot.getValue();
+                ArrayList<String> value = new ArrayList(((Map<String, ClipData.Item>) dataSnapshot.getValue()).values());
                 startFavourites(value);
 
             }
