@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -124,27 +125,47 @@ public class FirstLoginActivity extends BaseActivity {
         // Check if user has selected location -JK
         if(selectedLocation != null) {
 
+            TextView firstNameTv = findViewById(R.id.editTextFirstName);
+            TextView lastNameTv = findViewById(R.id.editTextLastName);
+            TextView phoneTv = findViewById(R.id.editTextPhone);
+
+            // Create new object from Name class -JK
+            Name name = new Name(firstNameTv.getText().toString(), lastNameTv.getText().toString());
+
             // Create new object from User class -JK
-            User user = new User(firebaseUser.getEmail(), firebaseUser.getDisplayName(), selectedLocation, selectedLatLng);
+            User user = new User(firebaseUser.getEmail(), name, selectedLocation, selectedLatLng, phoneTv.getText().toString());
 
         // If user selected client as user role, add new user to the database path 'users/clients' -JK
         if(selectedRadioButtonId == clientRadioButton.getId()) {
-            // Store user information to the DB  -JK
-            myRef.child("users").child("clients").child(mAuth.getCurrentUser().getUid()).setValue(user);
 
-            // Create Intent and go back to MainActivity -JK
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            // Check if user has inputted both names and phone number -JK
+            if (firstNameTv.getText().length() < 2 || lastNameTv.getText().length() < 2 || phoneTv.getText().length() < 5) {
+                Toast toast = Toast.makeText(this, R.string.nameInputError, Toast.LENGTH_SHORT);
+                toast.show();
+            } else {
+                // Store user information to the DB  -JK
+                myRef.child("users").child("clients").child(mAuth.getCurrentUser().getUid()).setValue(user);
+
+                // Create Intent and go back to MainActivity -JK
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+            }
         }
 
         // If user selected artist as user role, add new user to the database path 'users/artists' -JK
         else if(selectedRadioButtonId == artistRadioButton.getId()) {
+            // Check if user has inputted both names and phone number -JK
+            if (firstNameTv.getText().length() < 2 || lastNameTv.getText().length() < 2 || phoneTv.getText().length() < 5) {
+                Toast toast = Toast.makeText(this, R.string.nameInputError, Toast.LENGTH_SHORT);
+                toast.show();
+            } else {
             // Store user information to the DB  -JK
             myRef.child("users").child("artists").child(mAuth.getCurrentUser().getUid()).setValue(user);
+
             // Create Intent and go back to MainActivity -JK
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
-
+            }
         }
 
         // If user didn't select either user role, show Toast -JK
@@ -166,15 +187,31 @@ public class FirstLoginActivity extends BaseActivity {
     public static class User {
 
         public String email;
-        public String name;
+        public Name name;
         public String city;
         public LatLng latLng;
+        public String phone;
 
-        public User(String email, String name, String city, LatLng latLng) {
+        public User(String email, Name name, String city, LatLng latLng, String phone) {
             this.email = email;
             this.name = name;
             this.city = city;
             this.latLng = latLng;
+            this.phone = phone;
+
+        }
+
+    }
+
+    // Static class for creating Name objects -JK
+    public static class Name {
+
+        public String first;
+        public String last;
+
+        public Name(String firstName, String lastName) {
+            this.first = firstName;
+            this.last = lastName;
 
         }
 
