@@ -107,7 +107,13 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         String lastName = artist.getAsJsonObject("name").get("last").getAsString();
         String email = artist.get("email").getAsString();
         String phone = artist.get("phone").getAsString();
-        String image = pic.get("medium").getAsString();
+        String image = "https://png.pngtree.com/png-vector/20210604/ourmid/pngtree-gray-avatar-placeholder-png-image_3416697.jpg";
+        // Check if user has profile image in DB -JK
+        if(pic != null) {
+            image = pic.get("medium").getAsString();
+        } else {
+
+        }
 
         //  Replace the contents of the views with the strings
         Glide.with(viewHolder.getImageView().getContext()).load(image).into(viewHolder.imageView);
