@@ -2,6 +2,7 @@ package com.jk.mytattooartist;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +18,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import org.json.JSONException;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 
 public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder> {
@@ -28,6 +33,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     private JsonArray localDataSet;
+    private JsonArray wholeSet;
     private Gson gson = new Gson();
     private Boolean favorite = false;
 
@@ -81,7 +87,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
      */
     public ArtistAdapter(JsonArray jsonArray) throws JSONException {
         localDataSet = jsonArray;
-
+        wholeSet = jsonArray;
     }
 
     // Create new views (invoked by the layout manager)
@@ -107,10 +113,14 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         String lastName = artist.getAsJsonObject("name").get("last").getAsString();
         String email = artist.get("email").getAsString();
         String phone = artist.get("phone").getAsString();
-        String image = pic.get("medium").getAsString();
+        try {
+            String image = pic.get("medium").getAsString();
+            Glide.with(viewHolder.getImageView().getContext()).load(image).into(viewHolder.imageView);
+        } catch (Exception e) {
+            Log.d("Kuvan haku", "ei onnistu käyttäjälle: " + firstName + " " + lastName);
+        }
 
         //  Replace the contents of the views with the strings
-        Glide.with(viewHolder.getImageView().getContext()).load(image).into(viewHolder.imageView);
         viewHolder.getNameTextView().setText(firstName + " " + lastName);
         viewHolder.getEmailTextView().setText(email);
         viewHolder.getPhoneTextView().setText(phone);
@@ -144,6 +154,67 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
     @Override
     public int getItemCount() {
         return localDataSet.size();
+    }
+
+    public void updateList(JsonArray array) {
+        localDataSet = array;
+        notifyDataSetChanged();
+    }
+
+    public void filterList(ArrayList<String> filterList) {
+        localDataSet = wholeSet.deepCopy();
+        Log.d("esate", "filterlist koko " + filterList.size());
+        Log.d("esate ", "localdataset: " + localDataSet.toString());
+        ArrayList<String> female = new ArrayList<>();
+        female.add("Ms");
+        female.add("Miss");
+        female.add("Mrs");
+
+        if (!filterList.isEmpty()) {
+            Iterator i = localDataSet.iterator();
+            while (i.hasNext()) {
+                boolean remove = true;
+                JsonElement artist = (JsonElement) i.next();
+                try {
+                    JsonArray styles = artist.getAsJsonObject().getAsJsonArray("styles");
+                    for (JsonElement style : styles) {
+                        Log.d("Esate ", "style: " + style.toString());
+                        if (filterList.contains(style.getAsString())) {
+                            Log.d("Esate", "Artisti ei poisteta: " + artist.toString());
+                            remove = false;
+                        }
+                    }
+                } catch (Exception e) {
+                    Log.d("Esate", "Ei löydy tyyliä");
+                }
+                if (remove) {
+                    i.remove();
+                }
+            }
+/*            Iterator j = localDataSet.iterator();
+            while (j.hasNext()) {
+                boolean remove = true;
+                JsonElement artist = (JsonElement) j.next();
+                String title = artist.getAsJsonObject().getAsJsonObject("name").get("title").getAsString();
+                if (female.contains(title)) {
+                    title = "Female";
+                } else if (title.equals("Mr")){
+                    title = "Male";
+                } else {
+                    title = "Other";
+                }
+                try {
+                    if (filterList.get("title").contains(title)) remove = false;
+                } catch (Exception e) {
+                    Log.d("esate", "Ei titteliä");
+                }
+                if (remove) {
+                    j.remove();
+                }
+            }*/
+        }
+        notifyDataSetChanged();
+
     }
 
 }

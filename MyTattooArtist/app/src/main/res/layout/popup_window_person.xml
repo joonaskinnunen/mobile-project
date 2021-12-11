@@ -45,11 +45,11 @@
                 android:text="@string/female" />
 
             <CheckBox
-                android:id="@+id/cbDontCare"
+                android:id="@+id/cbOther"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:buttonTint="@color/burgundy"
-                android:text="@string/dont_care" />
+                android:text="@string/other" />
 
         </LinearLayout>
 
