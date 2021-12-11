@@ -39,7 +39,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
 
     /**
      * Provide a reference to the type of views that you are using
-     * (custom ViewHolder).
+     * (custom ViewHolder). -ET
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView nameTextView;
@@ -82,47 +82,49 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
     /**
      * Initialize the dataset of the Adapter.
      *
-     * @param jsonArray JSONArray containing the data to populate views to be used
-     * by RecyclerView.
+     * @param jsonArray JsonArray containing the data to populate views to be used
+     * by RecyclerView. -ET
      */
     public ArtistAdapter(JsonArray jsonArray) throws JSONException {
         localDataSet = jsonArray;
         wholeSet = jsonArray;
     }
 
-    // Create new views (invoked by the layout manager)
+    // Create new views (invoked by the layout manager) -ET
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        // Create a new view, which defines the UI of the list item
+        // Create a new view, which defines the UI of the list item -ET
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.artist_item, viewGroup, false);
 
         return new ViewHolder(view);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
+    // Replace the contents of a view (invoked by the layout manager) -ET
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
 
-        // Get the JsonObjects
+        // Get the JsonObjects -ET
         JsonObject artist = localDataSet.get(position).getAsJsonObject();
         JsonObject pic = artist.getAsJsonObject("picture");
+        Log.d("esate", "pic is null: " + (pic == null));
 
-        // Get the String format values of desired fields
+        // Get the String format values of desired fields -ET
         String firstName = artist.getAsJsonObject("name").get("first").getAsString();
         String lastName = artist.getAsJsonObject("name").get("last").getAsString();
         String email = artist.get("email").getAsString();
         String phone = artist.get("phone").getAsString();
 
+        // Set a placeholder image
         String image = "https://png.pngtree.com/png-vector/20210604/ourmid/pngtree-gray-avatar-placeholder-png-image_3416697.jpg";
+
         // Check if user has profile image in DB -JK
-        if(pic != null) {
-            image = pic.get("medium").getAsString();
-        } else {
+        if (pic != null) image = pic.get("medium").getAsString();
 
-        }
+        // Set image into viewholder with Glide -ET
+        Glide.with(viewHolder.getImageView().getContext()).load(image).into(viewHolder.imageView);
 
-        //  Replace the contents of the views with the strings
+        //  Replace the contents of the views with the strings -ET
         viewHolder.getNameTextView().setText(firstName + " " + lastName);
         viewHolder.getEmailTextView().setText(email);
         viewHolder.getPhoneTextView().setText(phone);
@@ -140,6 +142,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
             }
         });
 
+        // Set a click listener that starts a new activity when a list item is clicked -ET
         viewHolder.getArtistInfo().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -152,7 +155,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         });
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
+    // Return the size of your dataset (invoked by the layout manager) -ET
     @Override
     public int getItemCount() {
         return localDataSet.size();
@@ -163,6 +166,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         notifyDataSetChanged();
     }
 
+    // Filter the recyclerview list by the list of filters given as parameter -ET
     public void filterList(ArrayList<String> filterList) {
         localDataSet = wholeSet.deepCopy();
         Log.d("esate", "filterlist koko " + filterList.size());
