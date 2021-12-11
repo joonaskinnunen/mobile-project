@@ -1,5 +1,6 @@
 package com.jk.mytattooartist;
 
+import android.content.ClipData;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +15,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends BaseActivity {
 
@@ -31,7 +34,7 @@ public class MainActivity extends BaseActivity {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null){
+       if(currentUser != null){
             getDataFromDB();
         }
         // If user is not signed in then call createSignInIntent() -JK
@@ -39,7 +42,7 @@ public class MainActivity extends BaseActivity {
             createSignInIntent();
         }
 
-    /*    Intent intent = new Intent(this, FirstLoginActivity.class);
+       /*  Intent intent = new Intent(this, FirstLoginActivity.class);
         startActivity(intent); */
     }
 
@@ -57,7 +60,7 @@ public class MainActivity extends BaseActivity {
                 // whenever data at this location is updated.
 
                 // Get values as a String ArrayList
-                ArrayList<String> value = (ArrayList<String>) dataSnapshot.getValue();
+                ArrayList<String> value = new ArrayList(((Map<String, ClipData.Item>) dataSnapshot.getValue()).values());
 
                 // If there are no values, set error message into textview. If success, goto startFrontpage()
                 TextView tv = findViewById(R.id.textView);

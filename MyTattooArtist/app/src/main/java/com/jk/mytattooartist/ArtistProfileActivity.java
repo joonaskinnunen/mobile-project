@@ -1,19 +1,32 @@
 package com.jk.mytattooartist;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -21,44 +34,55 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
 public class ArtistProfileActivity extends BaseActivity {
 
     private FirebaseAuth mAuth;
-    private String appId ="602591627694835";
-    private String redirectUrl = "https://mytattooartist-d2298.firebaseapp.com/__/auth/handler";
-    private String authUrl ="https://api.instagram.com/oauth/authorize?client_id="+appId+"&redirect_uri="+ redirectUrl+ "&scope=user_profile,user_media&response_type=code";
-    private String checkUrl ="https://mytattooartist-d2298.firebaseapp.com/__/auth/handler?code=";
+
+    private final String appId ="602591627694835";
+    private final String redirectUrl = "https://mytattooartist-d2298.firebaseapp.com/__/auth/handler";
+    private final String authUrl ="https://api.instagram.com/oauth/authorize?client_id="+appId+"&redirect_uri="+ redirectUrl+ "&scope=user_profile,user_media&response_type=code";
+    private final String checkUrl ="https://mytattooartist-d2298.firebaseapp.com/__/auth/handler?code=";
     private String authCode;
-    private String igAppSecret = "1a302a11f9d6b0f0906987353193ee60";
+    private final String igAppSecret = "1a302a11f9d6b0f0906987353193ee60";
     private String userID;
     private String token;
     private String longLiveToken;
     private boolean codeReceived = false;
+    private RequestQueue requestQueue;
+    private List<InstagramMedia> instagramMediaList;
+    private RecyclerView recyclerView;
+    private String tokenExists;
+
+    private String testToken="IGQVJVLVNrZAzZApaElDWkhsZAVZAYaUpvZAjNiNVJVdzZACc2QtQ2JobjFxY2I2NEkyQW1xeTdkMWxEOEViUGwxMWM3QVotZAklWZAm92NDFGNUZAaQlJVVkFDTU9rWDhfXzhmZAVVJTi1rMzh3";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.artist_profile);
         mAuth = FirebaseAuth.getInstance();
+        recyclerView = findViewById(R.id.RecyclerViewInstagramMedia);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        requestQueue = VolleySingleton.getmInstance(this).getRequestQueue();
+        instagramMediaList = new ArrayList<>();
+
         artistInfo();
-        //webView();
-        artistInstagramPermission();
-
-    }
-
-
-    //Enable Javascript to be used on web view -VS
-    @SuppressLint("SetJavaScriptEnabled")
-    public void webView() {
-        WebView myWebView = (WebView) findViewById(R.id.instagramFeedWebView);
-        WebSettings webSettings = myWebView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-
+        tokenExists();
     }
 
     @Override
@@ -68,11 +92,129 @@ public class ArtistProfileActivity extends BaseActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
             Log.d("user", currentUser.getDisplayName());
-            //    reload();
         } else {
             createSignInIntent();
         }
     }
+
+    private void tokenExists() {
+
+        //Fetch Token of a current user from Firebase -VS
+        //If the token doesn't exists, set connect to instagram button visible. -VS
+        // if the token exists, start the process for getting the instagram media. -VS
+
+
+        database.getReference().child("users").child("artists").child(mAuth.getCurrentUser().getUid()).child("instagram").child("access_token").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
+                    findViewById(R.id.connectToInstagramButton).setVisibility(View.VISIBLE);
+                }
+                else {
+                    Log.d("firebase", String.valueOf(task.getResult().getValue()));
+                    tokenExists = String.valueOf(task.getResult().getValue());
+                    if(tokenExists!="null"){
+
+                        fetchInstagramMedia(tokenExists);
+                    }else
+                        findViewById(R.id.connectToInstagramButton).setVisibility(View.VISIBLE);
+                }
+            }
+
+        });
+    }
+
+    private void fetchInstagramMedia(final String token) {
+
+        // Send GET request to graph.instagram to receive JSon object containing media ids and captions. of certain user. -VS
+        //(user is defined by the access token. -VS
+        //Received ids and captions are passed down to another method alongside with the used token. -VS
+
+        String url = "https://graph.instagram.com/me/media?fields=id,caption&access_token="+token;
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url,null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray dataArray = response.getJSONArray("data");
+                            for(int i = 0 ; i < dataArray.length() ; i ++){         //loop through every id and call fetchInstagramURL() for each of them.
+                                JSONObject data = dataArray.getJSONObject(i);
+                                String dataID =data.getString("id");
+                                String dataCaption=null;
+                                if(data.getString("caption")!=null){
+                                    dataCaption =data.getString("caption");
+                                }
+                                if(dataCaption.contains("#")){
+                                    dataCaption =dataCaption.substring(0,dataCaption.indexOf("#"));
+                                }
+                                fetchInstagramURL(dataID,dataCaption,token);
+                                //Log.i("fetching media", dataID);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.i("problem in when fetching media","Exception");
+                Toast.makeText(ArtistProfileActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        requestQueue.add(request);
+    }
+
+    private void fetchInstagramURL(String id,String caption,final String token) {
+
+        //Using id and token from parameters, make another Get request to receive URL and media type corresponding the media ID. -VS
+        //Check if media_type==IMAGE  (VIDEO and CAROUSEL_ALBUM are skipped) -VS
+        //Use InstagramMedia Class to store the information and store objects into <List> that will be passed to recyclerView adapter. -VS
+        //Every object will be passed to the adapter separately. -VS
+
+        String url = "https://graph.instagram.com/"+id+"?fields=media_type,media_url&access_token="+token;
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        //Log.i("fetching media", id);
+                        try {
+                            if(response.getString("media_type").contains("IMAGE")){
+                                String mediaURL = response.getString("media_url");
+
+                                InstagramMedia instagramMedia = new InstagramMedia(id , caption , mediaURL);
+                                instagramMediaList.add(instagramMedia);
+
+                                //Log.i("fetching media", mediaURL);
+                                InstagramAdapter adapter = new InstagramAdapter(ArtistProfileActivity.this , instagramMediaList);
+                                recyclerView.setAdapter(adapter);
+
+                            }else
+                                Log.i("fetching media", "notIMAGE");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(ArtistProfileActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        requestQueue.add(request);
+    }
+
+    public void ConnectToInstagramClicked(View view){
+        //Button to bring up the Instagram authentication window. -VS
+        //If Authentication is already done OR the button is clicked, the button will be set to INVISIBLE -VS
+        //TODO: upon checking if token exists, set button to visible/invisible according to result.
+        Button button = findViewById(R.id.connectToInstagramButton);
+        button.setVisibility(view.INVISIBLE);
+        artistInstagramPermission();
+    }
+
 
     //Enable JS so instagram auth can be used in web view. -VS
     @SuppressLint("SetJavaScriptEnabled")
@@ -110,7 +252,7 @@ public class ArtistProfileActivity extends BaseActivity {
                     else
                         Log.i("VALUE: ", "codeReceived == false.");
 
-                    //myWebView.destroy();
+                    myWebView.destroy();
                 }
                 //else
                     //TODO: "&error_description=The+user+denied+your+request" close webview and/or process,
@@ -151,13 +293,11 @@ public class ArtistProfileActivity extends BaseActivity {
                 return params;
             }
         };
-
         Volley.newRequestQueue(this).add(request);
     }
 
-
-
     public void requestLongLiveToken(final String appSecret,final String token) {
+        //Exchange short lived token (which lasts for 1 hour, to long lived token that lasts 60 days.
         String postUrl = "https://graph.instagram.com/access_token?grant_type=ig_exchange_token&client_secret="+appSecret+"&access_token="+token;
         StringRequest request = new StringRequest(Request.Method.GET, postUrl, new Response.Listener<String>() {
             @Override
@@ -165,13 +305,11 @@ public class ArtistProfileActivity extends BaseActivity {
                 Log.i("Success Response = ", response);
                 longLiveToken = response.substring(response.indexOf("\"access_token\":\"")+16,response.indexOf("\",\"token_type\""));
 
-
                 //Add current users UserID & access_token to firebase as a child of a current userUID -VS
                 MediaAccess user = new MediaAccess(userID,longLiveToken);
 
-                //TODO: remove when logged in as artist.
-                //database.getReference().child("users").child("artists").child(mAuth.getCurrentUser().getUid()).child("instagram").setValue(user);
-
+                database.getReference().child("users").child("artists").child(mAuth.getCurrentUser().getUid()).child("instagram").setValue(user);
+                tokenExists();      //Start regular process to display instagram media.
             }
         }, new Response.ErrorListener() {
             @Override
@@ -179,14 +317,10 @@ public class ArtistProfileActivity extends BaseActivity {
                 Log.e("Error Response = ", error.toString());
             }
         });
-
         Volley.newRequestQueue(this).add(request);
     }
 
-
-
     //TODO: refresh longlived token every 60 days.
-
     //renewLongLiveToken(database.getReference().child("users").child("artists").child(mAuth.getCurrentUser().getUid()).child("instagram").get("access_token"););
     /*public void renewLongLiveToken(final String token) {
         String postUrl = "https://graph.instagram.com/refresh_access_token ?grant_type=ig_refresh_token&access_token="+token;

@@ -42,4 +42,8 @@
     <string name="choose_role_button">Submit</string>
     <string name="userRoleSelectionError">You must select a user role!</string>
     <string name="locationSelectionError">You must select location!</string>
+    <string name="firstName">First name</string>
+    <string name="lastName">Last name</string>
+    <string name="nameInputError">You must input your name and phone number</string>
+    <string name="phoneNumber">Phone</string>
 </resources>
