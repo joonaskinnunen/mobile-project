@@ -36,19 +36,18 @@ public class UserProfileActivity extends BaseActivity {
         }
     }
 
+    //TODO: Change PW
+
+
     public void userInfo() {
 
-        //temporary test value
-        //TODO: user value needs to be changed by mAuth -> is user / is artist
-        String user = "0";
 
         // get child references to DB -VS
-        //TODO: When Dababase structure is finalized, references has to be updated.
         FirebaseDatabase database = FirebaseDatabase.getInstance("https://mytattooartist-d2298-default-rtdb.europe-west1.firebasedatabase.app/");
         DatabaseReference myRef = database.getReference();
         DatabaseReference users = myRef.child("users");
         DatabaseReference clients = users.child("clients");
-        DatabaseReference userID = clients.child(user);
+        DatabaseReference userID = clients.child(mAuth.getCurrentUser().getUid());
         DatabaseReference name = userID.child("name");
 
         // Read title and full name from database and place it to views name field. -VS
