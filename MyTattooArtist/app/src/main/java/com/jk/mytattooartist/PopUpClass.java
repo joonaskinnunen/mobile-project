@@ -54,7 +54,7 @@ public class PopUpClass {
             } else {
                 arrayList.add(popupView.findViewById(R.id.cbMale));
                 arrayList.add(popupView.findViewById(R.id.cbFemale));
-                arrayList.add(popupView.findViewById(R.id.cbDontCare));
+                arrayList.add(popupView.findViewById(R.id.cbOther));
             }
             // new string Arraylist for checked values
             ArrayList<String> checked = new ArrayList<>();

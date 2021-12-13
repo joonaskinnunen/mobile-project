@@ -15,7 +15,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -31,6 +35,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
 
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://mytattooartist-d2298-default-rtdb.europe-west1.firebasedatabase.app/");
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    final String[] userRole = {""};
 
     private JsonArray localDataSet;
     private JsonArray wholeSet;
@@ -93,6 +98,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
     // Create new views (invoked by the layout manager) -ET
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        if(mAuth.getCurrentUser() != null) getUserRoleFromDB(mAuth.getCurrentUser().getEmail());
         // Create a new view, which defines the UI of the list item -ET
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.artist_item, viewGroup, false);
@@ -134,9 +140,11 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
             public void onClick(View v) {
                 if (!favorite) {
                     viewHolder.getFavoriteButton().setImageResource(R.drawable.ic_star);
+                    addFavourite(email);
                     favorite = true;
                 } else {
                     viewHolder.getFavoriteButton().setImageResource(R.drawable.ic_star_border_black);
+                    removeFavourite(email);
                     favorite = false;
                 }
             }
@@ -221,6 +229,110 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         }
         notifyDataSetChanged();
 
+    }
+
+    public void addFavourite(String favouriteEmail) {
+        DatabaseReference myRef = database.getReference();
+        String userEmail = mAuth.getCurrentUser().getEmail();
+        myRef.child("users").child(getUserRole() + "s").orderByChild("email").equalTo(userEmail).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+
+                // Arraylist to hold users favourite artists emails -JK
+                ArrayList<String> favouritesEmails = new ArrayList<String>();
+
+                String key = "0";
+
+                // Get users object key in DB and save it to the variable -JK
+                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                    key = childSnapshot.getKey();
+                }
+
+                // Get users favourite artists emails from DB to the favouritesEmails variable -JK
+                favouritesEmails = (ArrayList<String>) dataSnapshot.child(key).child("favourites").getValue();
+                if (favouritesEmails == null) {
+                    favouritesEmails = new ArrayList<>();
+                }
+                if(!favouritesEmails.contains(favouriteEmail)) {
+                    favouritesEmails.add(favouriteEmail);
+                }
+                myRef.child("users").child(userRole[0] + "s").child(mAuth.getCurrentUser().getUid()).child("favourites").setValue(favouritesEmails);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value -JK
+                Log.w("ERROR: ", "Failed to read value.", error.toException());
+            }
+        });
+
+    }
+
+    public void removeFavourite(String favouriteToRemove) {
+        DatabaseReference db = database.getReference();
+        DatabaseReference myRef = db.child("users").child(getUserRole() + "s").child(mAuth.getUid());
+        Log.d("myRef", myRef.toString());
+        myRef.child("favourites").child(favouriteToRemove).removeValue();
+    /*    myRef.orderByChild("favourites").equalTo(favouriteToRemove).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot data: dataSnapshot.getChildren()){
+                    Log.d("data.getRef", data.getRef().toString());
+                    data.getRef().removeValue();
+                }
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("ERROR: ",  databaseError.toException());
+            }
+        }); */
+
+    }
+
+    public void getUserRoleFromDB(String email) {
+        DatabaseReference artistUserRef = FirebaseDatabase.getInstance().getReference().child("users").child("artists");
+        artistUserRef.orderByChild("email").equalTo(email).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Log.d("datasnapShot artists", dataSnapshot.toString());
+                    updateUserRoleCB("artist");
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value -JK
+                Log.w("ERROR: ", "Failed to read value.", error.toException());
+            }
+        });
+
+        DatabaseReference clientUserRef = FirebaseDatabase.getInstance().getReference().child("users").child("clients");
+        clientUserRef.orderByChild("email").equalTo(email).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    updateUserRoleCB("client");
+                    Log.d("datasnapShot clients", dataSnapshot.toString());
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value -JK
+                Log.w("ERROR: ", "Failed to read value.", error.toException());
+            }
+        });
+    }
+
+    public void updateUserRoleCB(String role) {
+        userRole[0] = role;
+        Log.d("userRole: ", userRole[0]);
+    }
+
+    public String getUserRole() {
+        return userRole[0];
     }
 
 }
