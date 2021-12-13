@@ -79,13 +79,14 @@ public class BaseActivity  extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.myaccount:
-                Intent intent = new Intent(this, ArtistProfileActivity.class);
-                startActivity(intent);
-                return(true);
-                //"my account" will check if current user is client or artist and opens corresponding activity (profile) -VS,
-
-                //toMyAccount();
+                //Intent intent = new Intent(this, ArtistProfileActivity.class);
+                //startActivity(intent);
                 //return(true);
+
+
+                //"my account" will check if current user is client or artist and opens corresponding activity (profile) -VS,
+                toMyAccount();
+                return(true);
 
                 // Opens a favourite page -JK
             case R.id.favourites:
