@@ -3,24 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/Jasmiina/AndroidStudioProjects/mobile-project/MyTattooArtist/app/src/main/res/drawable/ic_star_border_black.xml" value="0.22135416666666666" />
-        <entry key="..\:/Users/Jasmiina/AndroidStudioProjects/mobile-project/MyTattooArtist/app/src/main/res/layout/activity_main.xml" value="0.2957427536231884" />
-        <entry key="..\:/Users/Jasmiina/AndroidStudioProjects/mobile-project/MyTattooArtist/app/src/main/res/layout/artist_item.xml" value="0.20520833333333333" />
-        <entry key="..\:/Users/Jasmiina/AndroidStudioProjects/mobile-project/MyTattooArtist/app/src/main/res/layout/artist_profile.xml" value="0.20520833333333333" />
-        <entry key="..\:/Users/Jasmiina/AndroidStudioProjects/mobile-project/MyTattooArtist/app/src/main/res/layout/favourite.xml" value="0.20520833333333333" />
-        <entry key="..\:/Users/Jasmiina/AndroidStudioProjects/mobile-project/MyTattooArtist/app/src/main/res/layout/first_login.xml" value="0.20520833333333333" />
-        <entry key="..\:/Users/Jasmiina/AndroidStudioProjects/mobile-project/MyTattooArtist/app/src/main/res/layout/front_page.xml" value="0.20520833333333333" />
-        <entry key="..\:/Users/Jasmiina/AndroidStudioProjects/mobile-project/MyTattooArtist/app/src/main/res/layout/popup_window_distance.xml" value="0.20520833333333333" />
-        <entry key="..\:/Users/Jasmiina/AndroidStudioProjects/mobile-project/MyTattooArtist/app/src/main/res/layout/popup_window_person.xml" value="0.20520833333333333" />
-        <entry key="..\:/Users/Jasmiina/AndroidStudioProjects/mobile-project/MyTattooArtist/app/src/main/res/layout/popup_window_styles.xml" value="0.20520833333333333" />
-        <entry key="..\:/Users/Jasmiina/AndroidStudioProjects/mobile-project/MyTattooArtist/app/src/main/res/layout/title_view.xml" value="0.2957427536231884" />
-        <entry key="..\:/Users/Jasmiina/AndroidStudioProjects/mobile-project/MyTattooArtist/app/src/main/res/layout/user_profile.xml" value="0.20520833333333333" />
         <entry key="..\:/Users/Joonas/Koodit/mobile-project/MyTattooArtist/app/src/main/res/layout/artist_item.xml" value="0.22" />
         <entry key="..\:/Users/Joonas/Koodit/mobile-project/MyTattooArtist/app/src/main/res/layout/artists_feed.xml" value="0.16893115942028986" />
         <entry key="..\:/Users/Joonas/Koodit/mobile-project/MyTattooArtist/app/src/main/res/layout/favourite.xml" value="0.25" />
         <entry key="..\:/Users/Joonas/Koodit/mobile-project/MyTattooArtist/app/src/main/res/layout/favourites.xml" value="0.19384057971014493" />
         <entry key="..\:/Users/Joonas/Koodit/mobile-project/MyTattooArtist/app/src/main/res/layout/first_login.xml" value="0.25" />
         <entry key="..\:/Users/Joonas/Koodit/mobile-project/MyTattooArtist/app/src/main/res/layout/front_page.xml" value="0.1" />
+        <entry key="..\:/Users/Joonas/Koodit/mobile-project/MyTattooArtist/app/src/main/res/layout/popup_window_distance.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/Joonas/Koodit/mobile-project/MyTattooArtist/app/src/main/res/layout/popup_window_person.xml" value="0.18802083333333333" />
         <entry key="..\:/Users/Joonas/Koodit/mobile-project/MyTattooArtist/app/src/main/res/layout/user_profile.xml" value="0.19384057971014493" />
         <entry key="..\:/Users/Joonas/Koodit/mobile-project/MyTattooArtist/app/src/main/res/layout/user_ui_for_artist.xml" value="0.19384057971014493" />
         <entry key="..\:/Users/Joonas/Koodit/mobile-project/MyTattooArtist/app/src/main/res/menu/menu.xml" value="0.14722222222222223" />
