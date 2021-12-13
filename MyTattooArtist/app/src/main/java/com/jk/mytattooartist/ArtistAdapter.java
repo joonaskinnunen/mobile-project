@@ -39,6 +39,8 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
 
     private JsonArray localDataSet;
     private JsonArray wholeSet;
+    JsonArray filteredByStyle;
+    JsonArray filteredByPerson;
     private Gson gson = new Gson();
     private Boolean favorite = false;
 
@@ -92,7 +94,10 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
      */
     public ArtistAdapter(JsonArray jsonArray) throws JSONException {
         localDataSet = jsonArray;
-        wholeSet = jsonArray;
+        wholeSet = jsonArray.deepCopy();
+        filteredByStyle = jsonArray.deepCopy();
+        filteredByPerson = jsonArray.deepCopy();
+        Log.d("esate", "Adapter constructor");
     }
 
     // Create new views (invoked by the layout manager) -ET
@@ -113,7 +118,6 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         // Get the JsonObjects -ET
         JsonObject artist = localDataSet.get(position).getAsJsonObject();
         JsonObject pic = artist.getAsJsonObject("picture");
-        Log.d("esate", "pic is null: " + (pic == null));
 
         // Get the String format values of desired fields -ET
         String firstName = artist.getAsJsonObject("name").get("first").getAsString();
@@ -135,6 +139,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         viewHolder.getEmailTextView().setText(email);
         viewHolder.getPhoneTextView().setText(phone);
 
+        // Click listener for setting the the favorite star as outline or filled. -ET
         viewHolder.getFavoriteButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -169,63 +174,102 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         return localDataSet.size();
     }
 
-    public void updateList(JsonArray array) {
-        localDataSet = array;
-        notifyDataSetChanged();
-    }
-
     // Filter the recyclerview list by the list of filters given as parameter -ET
+    // TODO: Find ways to reduce the amount of resetting arrays used in the method. -ET
     public void filterList(ArrayList<String> filterList) {
-        localDataSet = wholeSet.deepCopy();
-        Log.d("esate", "filterlist koko " + filterList.size());
-        Log.d("esate ", "localdataset: " + localDataSet.toString());
+
+        // Create array for comparing different titles for female gender from dataset.
         ArrayList<String> female = new ArrayList<>();
         female.add("Ms");
         female.add("Miss");
         female.add("Mrs");
 
+        // If there is a filter option set, iterate through the filter arrays and remove items
+        // not matching filter criteria. -ET
         if (!filterList.isEmpty()) {
-            Iterator i = localDataSet.iterator();
-            while (i.hasNext()) {
-                boolean remove = true;
-                JsonElement artist = (JsonElement) i.next();
-                try {
-                    JsonArray styles = artist.getAsJsonObject().getAsJsonArray("styles");
-                    for (JsonElement style : styles) {
-                        Log.d("Esate ", "style: " + style.toString());
-                        if (filterList.contains(style.getAsString())) {
-                            Log.d("Esate", "Artisti ei poisteta: " + artist.toString());
+
+            // TODO: Can the two iterator blocks be combined?
+                filteredByStyle = wholeSet.deepCopy();
+                Iterator i = filteredByStyle.iterator();
+                while (i.hasNext()) {
+                    boolean remove = true;
+                    JsonElement artist = (JsonElement) i.next();
+                    try {
+                        JsonArray styles = artist.getAsJsonObject().getAsJsonArray("styles");
+                        for (JsonElement style : styles) {
+                            if (filterList.contains(style.getAsString())) {
+                                remove = false;
+                            }
+                        }
+                    } catch (Exception e) {
+                    }
+                    if (remove) {
+                        i.remove();
+                    }
+                }
+
+                filteredByPerson = wholeSet.deepCopy();
+                Iterator j = filteredByPerson.iterator();
+                while (j.hasNext()) {
+                    boolean remove = true;
+                    JsonElement artist = (JsonElement) j.next();
+                    String title;
+                    try {
+                        title = artist.getAsJsonObject().getAsJsonObject("name").get("title").getAsString();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        title = "Other";
+                    }
+                    if (female.contains(title)) {
+                        title = "Female";
+                    } else if (title.equals("Mr")){
+                        title = "Male";
+                    } else {
+                        title = "Other";
+                    }
+                    try {
+                        if (filterList.contains(title)) {
                             remove = false;
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    Log.d("Esate", "Ei löydy tyyliä");
+                    if (remove) {
+                        j.remove();
+                    }
                 }
-                if (remove) {
-                    i.remove();
+
+            /*
+            Whe two filters are set, compare to filtered sets and find common items.
+            Set common items as dataset. -ET
+             */
+
+            // Find common elements by iterating arrays filteredByPerson and filteredByStyle -ET
+            JsonArray commonElements = new JsonArray();
+            for (int p=0; p<filteredByPerson.size(); p++) {
+                for (int s=0; s<filteredByStyle.size(); s++) {
+                    if (filteredByPerson.get(p).getAsJsonObject().getAsJsonObject("name").equals(filteredByStyle.get(s).getAsJsonObject().getAsJsonObject("name"))) {
+                        commonElements.add(filteredByPerson.get(p));
+                    }
                 }
             }
-/*            Iterator j = localDataSet.iterator();
-            while (j.hasNext()) {
-                boolean remove = true;
-                JsonElement artist = (JsonElement) j.next();
-                String title = artist.getAsJsonObject().getAsJsonObject("name").get("title").getAsString();
-                if (female.contains(title)) {
-                    title = "Female";
-                } else if (title.equals("Mr")){
-                    title = "Male";
-                } else {
-                    title = "Other";
-                }
-                try {
-                    if (filterList.get("title").contains(title)) remove = false;
-                } catch (Exception e) {
-                    Log.d("esate", "Ei titteliä");
-                }
-                if (remove) {
-                    j.remove();
-                }
-            }*/
+
+            // Set common elements as new dataset for adapter -ET
+            localDataSet = commonElements.deepCopy();
+
+            // If other filter array is empty, reset it and set the other one as dataset -ET
+            if (filteredByStyle.isEmpty()) {
+                localDataSet = filteredByPerson.deepCopy();
+            }
+            if (filteredByPerson.isEmpty()) {
+                localDataSet = filteredByStyle.deepCopy();
+            }
+
+        // If filterList is empty, reset all arrays to contain all items -ET
+        } else {
+            localDataSet = wholeSet.deepCopy();
+            filteredByPerson = wholeSet.deepCopy();
+            filteredByStyle = wholeSet.deepCopy();
         }
         notifyDataSetChanged();
 

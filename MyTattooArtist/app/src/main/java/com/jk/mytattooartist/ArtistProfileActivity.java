@@ -209,7 +209,6 @@ public class ArtistProfileActivity extends BaseActivity {
     public void ConnectToInstagramClicked(View view){
         //Button to bring up the Instagram authentication window. -VS
         //If Authentication is already done OR the button is clicked, the button will be set to INVISIBLE -VS
-        //TODO: upon checking if token exists, set button to visible/invisible according to result.
         Button button = findViewById(R.id.connectToInstagramButton);
         button.setVisibility(view.INVISIBLE);
         artistInstagramPermission();
@@ -220,6 +219,7 @@ public class ArtistProfileActivity extends BaseActivity {
     @SuppressLint("SetJavaScriptEnabled")
     private void artistInstagramPermission() {
         WebView myWebView = (WebView) findViewById(R.id.instagramFeedWebView);
+        myWebView.setVisibility(View.VISIBLE);
 
         WebSettings webSettings = myWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -239,23 +239,20 @@ public class ArtistProfileActivity extends BaseActivity {
             //get Auth code from url after giving app permission to use instagram profile and media data -VS
             public void onPageFinished(WebView view, String viewUrl) {
                 Log.i("VALUE: ", "URL open!");
-                if(viewUrl.contains(checkUrl)){
+                if(myWebView.getUrl().contains("access_denied")){
+                    myWebView.setVisibility(View.GONE);
+                    Log.i("VALUE: ", "codeReceived == false.");
+                    Toast.makeText(ArtistProfileActivity.this, "Authentication Failed, please try again.", Toast.LENGTH_SHORT).show();
+                    findViewById(R.id.connectToInstagramButton).setVisibility(View.VISIBLE);
+                }
+                else if(viewUrl.contains(checkUrl)){
                     auth_code = viewUrl.substring(viewUrl.indexOf("code=")+5,viewUrl.length()-2);
                     Log.i("Auth_Code: ", auth_code);
                     authCode=auth_code;
-                    codeReceived=true;
-                    if(codeReceived==true){
-                        Log.i("VALUE: ", "codeReceived == true.");
-                        requestAccessToken(authCode);
-
-                    }
-                    else
-                        Log.i("VALUE: ", "codeReceived == false.");
-
+                    Log.i("VALUE: ", "codeReceived == true.");
+                    requestAccessToken(authCode);
                     myWebView.destroy();
                 }
-                //else
-                    //TODO: "&error_description=The+user+denied+your+request" close webview and/or process,
             }
         });
     }
@@ -348,15 +345,11 @@ public class ArtistProfileActivity extends BaseActivity {
 
 
     public void artistInfo() {
-
-        //TODO:use proper UID
-        String user = "0";
-
         // Get references to the database -JM
         DatabaseReference myRef = database.getReference();
         DatabaseReference users = myRef.child("users");
         DatabaseReference artists = users.child("artists");
-        DatabaseReference userID = artists.child(user);
+        DatabaseReference userID = artists.child(mAuth.getCurrentUser().getUid());
         DatabaseReference name = userID.child("name");
         DatabaseReference location = userID.child("location");
         DatabaseReference street = location.child("street");
