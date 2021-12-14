@@ -91,6 +91,7 @@ public class ArtistProfileActivity extends BaseActivity {
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
+            //TODO: java.lang.RuntimeException: Unable to start activity ComponentInfo{com.jk.mytattooartist/com.jk.mytattooartist.ArtistProfileActivity}: java.lang.NullPointerException: println needs a message
             Log.d("user", currentUser.getDisplayName());
         } else {
             createSignInIntent();
@@ -448,6 +449,33 @@ public class ArtistProfileActivity extends BaseActivity {
                 // Failed to read value
                 Log.w("ERROR: ", "Failed to read value.", error.toException());
             }
+        });
+    }
+
+    public void changePasswordClickedArtist(View view){
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        database.getReference().child("users").child("artists").child(mAuth.getCurrentUser().getUid()).child("email").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
+                }
+                else {
+                    String emailAddres = String.valueOf(task.getResult().getValue());
+                    Log.e("Email", emailAddres, task.getException());
+                    auth.sendPasswordResetEmail(emailAddres)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Log.d("Email", "Email sent.");
+                                        Toast.makeText(ArtistProfileActivity.this, "Password reset link has been sent to your email", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                }
+            }
+
         });
     }
 
