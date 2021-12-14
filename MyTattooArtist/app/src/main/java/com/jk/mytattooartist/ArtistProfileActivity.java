@@ -1,7 +1,6 @@
 package com.jk.mytattooartist;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,7 +20,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
@@ -32,11 +30,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,6 +40,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 
 public class ArtistProfileActivity extends BaseActivity {
@@ -61,14 +56,10 @@ public class ArtistProfileActivity extends BaseActivity {
     private String userID;
     private String token;
     private String longLiveToken;
-    private boolean codeReceived = false;
     private RequestQueue requestQueue;
     private List<InstagramMedia> instagramMediaList;
     private RecyclerView recyclerView;
     private String tokenExists;
-
-    private String testToken="IGQVJVLVNrZAzZApaElDWkhsZAVZAYaUpvZAjNiNVJVdzZACc2QtQ2JobjFxY2I2NEkyQW1xeTdkMWxEOEViUGwxMWM3QVotZAklWZAm92NDFGNUZAaQlJVVkFDTU9rWDhfXzhmZAVVJTi1rMzh3";
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +71,7 @@ public class ArtistProfileActivity extends BaseActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         requestQueue = VolleySingleton.getmInstance(this).getRequestQueue();
         instagramMediaList = new ArrayList<>();
+        findViewById(R.id.userProfileChangePasswordButton2).setVisibility(View.VISIBLE);
 
         artistInfo();
         tokenExists();
@@ -105,7 +97,7 @@ public class ArtistProfileActivity extends BaseActivity {
         // if the token exists, start the process for getting the instagram media. -VS
 
 
-        database.getReference().child("users").child("artists").child(mAuth.getCurrentUser().getUid()).child("instagram").child("access_token").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+        database.getReference().child("users").child("artists").child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child("instagram").child("access_token").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (!task.isSuccessful()) {
@@ -115,7 +107,7 @@ public class ArtistProfileActivity extends BaseActivity {
                 else {
                     Log.d("firebase", String.valueOf(task.getResult().getValue()));
                     tokenExists = String.valueOf(task.getResult().getValue());
-                    if(tokenExists!="null"){
+                    if(!tokenExists.equals("null")){
 
                         fetchInstagramMedia(tokenExists);
                     }else
@@ -143,10 +135,9 @@ public class ArtistProfileActivity extends BaseActivity {
                             for(int i = 0 ; i < dataArray.length() ; i ++){         //loop through every id and call fetchInstagramURL() for each of them.
                                 JSONObject data = dataArray.getJSONObject(i);
                                 String dataID =data.getString("id");
-                                String dataCaption=null;
-                                if(data.getString("caption")!=null){
-                                    dataCaption =data.getString("caption");
-                                }
+                                String dataCaption;
+                                data.getString("caption");
+                                dataCaption =data.getString("caption");
                                 if(dataCaption.contains("#")){
                                     dataCaption =dataCaption.substring(0,dataCaption.indexOf("#"));
                                 }
@@ -211,6 +202,7 @@ public class ArtistProfileActivity extends BaseActivity {
         //Button to bring up the Instagram authentication window. -VS
         //If Authentication is already done OR the button is clicked, the button will be set to INVISIBLE -VS
         Button button = findViewById(R.id.connectToInstagramButton);
+        findViewById(R.id.userProfileChangePasswordButton2).setVisibility(View.INVISIBLE);
         button.setVisibility(view.INVISIBLE);
         artistInstagramPermission();
     }
@@ -242,7 +234,6 @@ public class ArtistProfileActivity extends BaseActivity {
                 Log.i("VALUE: ", "URL open!");
                 if(myWebView.getUrl().contains("access_denied")){
                     myWebView.setVisibility(View.GONE);
-                    Log.i("VALUE: ", "codeReceived == false.");
                     Toast.makeText(ArtistProfileActivity.this, "Authentication Failed, please try again.", Toast.LENGTH_SHORT).show();
                     findViewById(R.id.connectToInstagramButton).setVisibility(View.VISIBLE);
                 }
@@ -250,7 +241,6 @@ public class ArtistProfileActivity extends BaseActivity {
                     auth_code = viewUrl.substring(viewUrl.indexOf("code=")+5,viewUrl.length()-2);
                     Log.i("Auth_Code: ", auth_code);
                     authCode=auth_code;
-                    Log.i("VALUE: ", "codeReceived == true.");
                     requestAccessToken(authCode);
                     myWebView.destroy();
                 }
@@ -350,7 +340,7 @@ public class ArtistProfileActivity extends BaseActivity {
         DatabaseReference myRef = database.getReference();
         DatabaseReference users = myRef.child("users");
         DatabaseReference artists = users.child("artists");
-        DatabaseReference userID = artists.child(mAuth.getCurrentUser().getUid());
+        DatabaseReference userID = artists.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
         DatabaseReference name = userID.child("name");
         DatabaseReference location = userID.child("location");
         DatabaseReference street = location.child("street");
@@ -359,17 +349,17 @@ public class ArtistProfileActivity extends BaseActivity {
         // Read name from the database -JM
         name.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                String value = dataSnapshot.child("title").getValue(String.class) + ". " + dataSnapshot.child("first").getValue(String.class) + " " + dataSnapshot.child("last").getValue(String.class);
+                String value =  dataSnapshot.child("first").getValue(String.class) + " " + dataSnapshot.child("last").getValue(String.class);
                 Log.i("VALUE: ", "value is: " + value);
                 TextView tv = findViewById(R.id.profileNameField);
                 tv.setText(value);
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error) {
                 // Failed to read value
                 Log.w("ERROR: ", "Failed to read value.", error.toException());
             }
@@ -378,7 +368,7 @@ public class ArtistProfileActivity extends BaseActivity {
        // Read e-mail from the database -JM
         userID.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
                 String value = dataSnapshot.child("email").getValue(String.class);
@@ -388,7 +378,7 @@ public class ArtistProfileActivity extends BaseActivity {
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error) {
                 // Failed to read value
                 Log.w("ERROR: ", "Failed to read value.", error.toException());
             }
@@ -397,7 +387,7 @@ public class ArtistProfileActivity extends BaseActivity {
         // Read phone number from the database -JM
         userID.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
                 String value = dataSnapshot.child("phone").getValue(String.class);
@@ -407,7 +397,7 @@ public class ArtistProfileActivity extends BaseActivity {
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error) {
                 // Failed to read value
                 Log.w("ERROR: ", "Failed to read value.", error.toException());
             }
@@ -416,7 +406,7 @@ public class ArtistProfileActivity extends BaseActivity {
         // Read street from the database -JM
         street.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated
                 String value = dataSnapshot.child("name").getValue(String.class) + " " + dataSnapshot.child("number").getValue();
@@ -426,7 +416,7 @@ public class ArtistProfileActivity extends BaseActivity {
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error) {
                 // Failed to read value
                 Log.w("ERROR: ", "Failed to read value.", error.toException());
             }
@@ -435,7 +425,7 @@ public class ArtistProfileActivity extends BaseActivity {
         // Read postcode and city from the database -JM
         location.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated
                 String value = dataSnapshot.child("postcode").getValue() + " " + dataSnapshot.child("city").getValue(String.class);
@@ -445,7 +435,7 @@ public class ArtistProfileActivity extends BaseActivity {
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError error) {
                 // Failed to read value
                 Log.w("ERROR: ", "Failed to read value.", error.toException());
             }
@@ -454,7 +444,7 @@ public class ArtistProfileActivity extends BaseActivity {
 
     public void changePasswordClickedArtist(View view){
         FirebaseAuth auth = FirebaseAuth.getInstance();
-        database.getReference().child("users").child("artists").child(mAuth.getCurrentUser().getUid()).child("email").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+        database.getReference().child("users").child("artists").child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child("email").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (!task.isSuccessful()) {
