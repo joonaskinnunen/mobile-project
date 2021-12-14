@@ -1,5 +1,6 @@
 package com.jk.mytattooartist;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -7,12 +8,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
@@ -45,6 +48,7 @@ public class BaseActivity  extends AppCompatActivity {
     final String[] userRole = {""};
     boolean isNewUser = false;
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,10 +59,14 @@ public class BaseActivity  extends AppCompatActivity {
         // Showing the back button in action bar -JK
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        //Actionbar Logo
+        //Actionbar Logo -JM
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setLogo(R.drawable.ic_logo);
         actionBar.setDisplayUseLogoEnabled(true);
+
+        // Set background image -JM
+        View rootView = (View) findViewById(android.R.id.content);
+        rootView.setBackground(ResourcesCompat.getDrawable(getResources(), R.mipmap.background_image, null));
 
     }
 
