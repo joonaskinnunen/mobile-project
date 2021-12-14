@@ -3,6 +3,7 @@ package com.jk.mytattooartist;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
@@ -57,6 +59,13 @@ public class FirstLoginActivity extends BaseActivity {
         // Hide the back button in action bar -JK
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(false);
+
+
+        // Set background color to light gray -JM
+        View rootView = (View) findViewById(android.R.id.content);
+        rootView.setBackgroundColor(getResources().getColor(R.color.light_gray));
+
+
 
         // Initialize app variable -JK
         ApplicationInfo app = null;

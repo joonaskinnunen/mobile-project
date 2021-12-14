@@ -16,6 +16,19 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:srcCompat="@drawable/background_shape"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="@id/instagramFeedWebView"
+                app:layout_constraintBottom_toTopOf="@id/RecyclerViewInstagramMedia"
+                app:layout_constraintVertical_weight="1"
+                app:layout_constraintHorizontal_weight="1"
+                />
+
             <TextView
                 android:id="@+id/profileNameTag"
                 android:layout_width="wrap_content"
@@ -158,7 +171,8 @@
                 android:layout_height="match_parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/profileSocialsTag" />
+                app:layout_constraintTop_toBottomOf="@id/profileSocialsTag"
+                android:layout_marginTop="20dp"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
