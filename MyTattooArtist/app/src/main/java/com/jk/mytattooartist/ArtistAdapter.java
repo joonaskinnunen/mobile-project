@@ -26,7 +26,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -94,11 +96,13 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
      * @param jsonArray JsonArray containing the data to populate views to be used
      * by RecyclerView. -ET
      */
-    public ArtistAdapter(JsonArray jsonArray) throws JSONException {
-        localDataSet = jsonArray;
-        wholeSet = jsonArray.deepCopy();
-        filteredByStyle = jsonArray.deepCopy();
-        filteredByPerson = jsonArray.deepCopy();
+    public ArtistAdapter(JSONArray jsonArray) throws JSONException {
+        String json = gson.toJson(jsonArray);
+        JsonArray jsonArr = gson.fromJson(json, JsonArray.class);
+        localDataSet = jsonArr;
+        wholeSet = localDataSet.deepCopy();
+        filteredByStyle = localDataSet.deepCopy();
+        filteredByPerson = localDataSet.deepCopy();
         Log.d("esate", "Adapter constructor");
     }
 
@@ -120,6 +124,9 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         // Get the JsonObjects -ET
         JsonObject artist = localDataSet.get(position).getAsJsonObject();
         JsonObject pic = artist.getAsJsonObject("picture");
+        Log.d("keyset", artist.keySet().toString());
+
+        Log.d("artisttt", artist.toString());
 
         // Get the String format values of desired fields -ET
         String firstName = artist.getAsJsonObject("name").get("first").getAsString();

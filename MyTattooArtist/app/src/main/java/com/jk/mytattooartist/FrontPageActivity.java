@@ -24,6 +24,7 @@ import com.google.android.material.slider.RangeSlider;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
@@ -35,8 +36,8 @@ public class FrontPageActivity extends BaseActivity {
     ArtistAdapter artistAdapter;
     FloatingActionButton fabFilters, fabDistance, fabGender, fabStyles;
     Boolean isFABOpen = false;
-    JsonArray filteredData = new JsonArray();
-    JsonArray jsonArray2 = new JsonArray();
+    JSONArray filteredData = new JSONArray();
+    JSONArray jsonArray2 = new JSONArray();
 
     // new string Arraylist for checked values
     ArrayList<String> checked = new ArrayList<>();
@@ -53,8 +54,8 @@ public class FrontPageActivity extends BaseActivity {
         // Get the Firebase data through intent
         Bundle extras = getIntent().getExtras();
         ArrayList<String> arrayList = extras.getStringArrayList("Data");
-        jsonArray2 = new Gson().toJsonTree(arrayList).getAsJsonArray();
-        filteredData = jsonArray2.deepCopy();
+        jsonArray2 = new JSONArray(arrayList);
+        filteredData = jsonArray2;
 
         // Hide the back button in action bar -JK
         actionBar.setDisplayHomeAsUpEnabled(false);
