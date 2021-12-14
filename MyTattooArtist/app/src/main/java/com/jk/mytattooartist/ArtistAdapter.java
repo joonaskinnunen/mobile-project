@@ -1,5 +1,6 @@
 package com.jk.mytattooartist;
 
+import android.content.ClipData;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,6 +30,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Map;
 
 
 public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder> {
@@ -125,6 +127,16 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         String email = artist.get("email").getAsString();
         String phone = artist.get("phone").getAsString();
 
+        isFavourite(email);
+
+        if (!favorite) {
+            viewHolder.getFavoriteButton().setImageResource(R.drawable.ic_star);
+            isFavourite(email);
+        } else {
+            viewHolder.getFavoriteButton().setImageResource(R.drawable.ic_star_border_black);
+            isFavourite(email);
+        }
+
         // Set a placeholder image
         String image = "https://png.pngtree.com/png-vector/20210604/ourmid/pngtree-gray-avatar-placeholder-png-image_3416697.jpg";
 
@@ -146,11 +158,11 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
                 if (!favorite) {
                     viewHolder.getFavoriteButton().setImageResource(R.drawable.ic_star);
                     addFavourite(email);
-                    favorite = true;
+                    isFavourite(email);
                 } else {
                     viewHolder.getFavoriteButton().setImageResource(R.drawable.ic_star_border_black);
                     removeFavourite(email);
-                    favorite = false;
+                    isFavourite(email);
                 }
             }
         });
@@ -275,6 +287,47 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
 
     }
 
+    public void isFavourite(String email) {
+        DatabaseReference myRef = database.getReference();
+        String userEmail = mAuth.getCurrentUser().getEmail();
+        myRef.child("users").child(getUserRole() + "s").orderByChild("email").equalTo(userEmail).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+
+                // Arraylist to hold users favourite artists emails -JK
+                ArrayList<String> favouritesEmails = new ArrayList<String>();
+
+                String key = "0";
+
+                // Get users object key in DB and save it to the variable -JK
+                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                    key = childSnapshot.getKey();
+                }
+
+                // Get users favourite artists emails from DB to the favouritesEmails variable -JK
+                favouritesEmails = (ArrayList<String>) dataSnapshot.child(key).child("favourites").getValue();
+
+                if (favouritesEmails == null) {
+                    favouritesEmails = new ArrayList<>();
+                }
+                Log.d("favouritesEmails", favouritesEmails.toString());
+                if(favouritesEmails.contains(email)) {
+                    favorite = true;
+                } else {
+                    favorite = false;
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value -JK
+                Log.w("ERROR: ", "Failed to read value.", error.toException());
+            }
+        });
+    }
+
     public void addFavourite(String favouriteEmail) {
         DatabaseReference myRef = database.getReference();
         String userEmail = mAuth.getCurrentUser().getEmail();
@@ -296,6 +349,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
 
                 // Get users favourite artists emails from DB to the favouritesEmails variable -JK
                 favouritesEmails = (ArrayList<String>) dataSnapshot.child(key).child("favourites").getValue();
+
                 if (favouritesEmails == null) {
                     favouritesEmails = new ArrayList<>();
                 }
@@ -316,10 +370,11 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
 
     public void removeFavourite(String favouriteToRemove) {
         DatabaseReference db = database.getReference();
-        DatabaseReference myRef = db.child("users").child(getUserRole() + "s").child(mAuth.getUid());
+        DatabaseReference myRef = db.child("users").child(getUserRole() + "s").child(mAuth.getUid()).child("favourites");
         Log.d("myRef", myRef.toString());
-        myRef.child("favourites").child(favouriteToRemove).removeValue();
-    /*    myRef.orderByChild("favourites").equalTo(favouriteToRemove).addListenerForSingleValueEvent(new ValueEventListener() {
+       // myRef.child("favourites").orderByValue().equalTo(favouriteToRemove).;
+
+        myRef.orderByValue().equalTo(favouriteToRemove).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot data: dataSnapshot.getChildren()){
@@ -332,7 +387,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
             public void onCancelled(DatabaseError databaseError) {
                 Log.w("ERROR: ",  databaseError.toException());
             }
-        }); */
+        });
 
     }
 

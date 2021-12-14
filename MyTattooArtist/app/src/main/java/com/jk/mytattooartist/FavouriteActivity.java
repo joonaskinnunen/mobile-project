@@ -87,8 +87,10 @@ public class FavouriteActivity extends BaseActivity {
                             email = email.replaceAll("\"", "");
 
                             // If emails match, add emails to the filteredList -JK
-                            if (favouritesEmails.get(i).equals(email)) {
+                            if(favouritesEmails.get(i) != null) {
+                                if (favouritesEmails.get(i).equals(email)) {
                                     filteredList.add(arrayList.get(j));
+                                }
                             }
                         }
                     }
