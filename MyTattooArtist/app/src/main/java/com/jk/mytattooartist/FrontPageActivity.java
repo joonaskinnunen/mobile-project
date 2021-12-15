@@ -5,6 +5,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -98,25 +99,22 @@ public class FrontPageActivity extends BaseActivity {
                     if (layout == R.layout.popup_window_distance) {
                         RangeSlider rangeSlider = popupView.findViewById(R.id.rangeSlider);
                         TextView textView = popupView.findViewById(R.id.setDistance);
-                        rangeSlider.setValues(distance);
-                        if (distance == 0) {
-                            textView.setText("Distance not set.");
-                        } else {
-                            textView.setText("Distance set at: " + (int) distance + " km");
-                        }
+                        getFormatted(distance,textView,rangeSlider);
+                        Button clearButton = popupView.findViewById(R.id.clearButton);
+                        clearButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                distance = 0;
+                                getFormatted(0,textView,rangeSlider);
+                            }
+                        });
+
                         rangeSlider.setLabelFormatter(new LabelFormatter() {
                             @NonNull
                             @Override
                             public String getFormattedValue(float value) {
                                 distance = value;
-//                                Log.d("esate", "value: " + distance);
-                                artistAdapter.filterList(checked, (int) distance);
-                                if (distance == 0) {
-                                    textView.setText("Distance not set.");
-                                } else {
-                                    textView.setText("Distance set at: " + (int) value + " km");
-                                }
-                                return (int) value + " km";
+                                return getFormatted(distance, textView, rangeSlider);
                             }
                         });
                     }
@@ -227,5 +225,17 @@ public class FrontPageActivity extends BaseActivity {
         for (Map.Entry<View,Integer> entry: arrayMap.entrySet()) {
             entry.getKey().animate().translationY(0);
         }
+    }
+
+    private String getFormatted(float dist, TextView textView, RangeSlider slider) {
+        // Log.d("esate", "value: " + distance);
+        slider.setValues(dist);
+        artistAdapter.filterList(checked, (int) dist);
+        if (dist == 0) {
+            textView.setText("Distance not set.");
+        } else {
+            textView.setText("Distance set at: " + (int) dist + " km");
+        }
+        return (int) dist + " km";
     }
 }
