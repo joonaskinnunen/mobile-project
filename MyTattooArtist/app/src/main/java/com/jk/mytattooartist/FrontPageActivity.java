@@ -2,6 +2,7 @@ package com.jk.mytattooartist;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -35,14 +36,16 @@ public class FrontPageActivity extends BaseActivity {
     ArtistAdapter artistAdapter;
     FloatingActionButton fabFilters, fabDistance, fabGender, fabStyles;
     Boolean isFABOpen = false;
-    JsonArray filteredData = new JsonArray();
     JsonArray jsonArray2 = new JsonArray();
 
-    // new string Arraylist for checked values
+    // Integer for filtering by distance -ET
+    float distance = 0;
+
+    // new string Arraylist for checked values -ET
     ArrayList<String> checked = new ArrayList<>();
 
     // Create an arraymap for storing floating action button views and
-    // the popup layouts they refer to
+    // the popup layouts they refer to. -ET
     ArrayMap<View, Integer> arrayMap = new ArrayMap<>();
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,18 +53,18 @@ public class FrontPageActivity extends BaseActivity {
         setContentView(R.layout.front_page);
         ActionBar actionBar = getSupportActionBar();
 
-        // Get the Firebase data through intent
+        // Get the Firebase data through intent -ET
         Bundle extras = getIntent().getExtras();
         ArrayList<String> arrayList = extras.getStringArrayList("Data");
         jsonArray2 = new Gson().toJsonTree(arrayList).getAsJsonArray();
-        filteredData = jsonArray2.deepCopy();
 
         // Hide the back button in action bar -JK
         actionBar.setDisplayHomeAsUpEnabled(false);
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        // Set adapter for recyclerview
+
+        // Set adapter for recyclerview -ET
         try {
             artistAdapter = new ArtistAdapter(jsonArray2);
             recyclerView.setAdapter(artistAdapter);
@@ -69,11 +72,13 @@ public class FrontPageActivity extends BaseActivity {
             e.printStackTrace();
         }
 
+        // Floating action buttons -ET
         fabFilters = findViewById(R.id.fabFilters);
         fabDistance = findViewById(R.id.fabDistance);
         fabGender = findViewById(R.id.fabGender);
         fabStyles = findViewById(R.id.fabStyles);
 
+        // Map holding filter fabs and layout ids. -ET
         arrayMap.put(fabDistance, R.layout.popup_window_distance);
         arrayMap.put(fabGender, R.layout.popup_window_person);
         arrayMap.put(fabStyles, R.layout.popup_window_styles);
@@ -87,7 +92,7 @@ public class FrontPageActivity extends BaseActivity {
             key.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //Create a View object yourself through inflater
+                    //Create a View object through inflater
                     LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(view.getContext().LAYOUT_INFLATER_SERVICE);
                     View popupView = inflater.inflate(layout, null);
 
@@ -95,10 +100,15 @@ public class FrontPageActivity extends BaseActivity {
                     if (layout == R.layout.popup_window_distance) {
                         RangeSlider rangeSlider = popupView.findViewById(R.id.rangeSlider);
                         TextView textView = popupView.findViewById(R.id.setDistance);
+                        rangeSlider.setValues(distance);
+                        textView.setText("Distance set at: " + (int) distance + " km");
                         rangeSlider.setLabelFormatter(new LabelFormatter() {
                             @NonNull
                             @Override
                             public String getFormattedValue(float value) {
+                                distance = value;
+//                                Log.d("esate", "value: " + distance);
+                                artistAdapter.filterList(checked, (int) distance);
                                 textView.setText("Distance set at: " + (int) value + " km");
                                 return (int) value + " km";
                             }
@@ -144,7 +154,7 @@ public class FrontPageActivity extends BaseActivity {
                                         checked.remove(checkBox.getText().toString());
                                         Toast.makeText(view.getContext(), "Your selections: " + checked, Toast.LENGTH_SHORT).show();
                                     }
-                                    artistAdapter.filterList(checked);
+                                    artistAdapter.filterList(checked, (int) distance);
                                 }
                             });
                         }

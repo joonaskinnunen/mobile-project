@@ -11,11 +11,13 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,14 +39,20 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
 
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://mytattooartist-d2298-default-rtdb.europe-west1.firebasedatabase.app/");
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    FirebaseUser currentUser = mAuth.getCurrentUser();
+    DatabaseReference myRef = database.getReference();
+    String userId = currentUser.getUid();
     final String[] userRole = {""};
 
     private JsonArray localDataSet;
     private JsonArray wholeSet;
     JsonArray filteredByStyle;
     JsonArray filteredByPerson;
+    JsonArray filteredByDistance;
     private Gson gson = new Gson();
     private Boolean favorite = false;
+    JsonObject location = new JsonObject();
+
 
     /**
      * Provide a reference to the type of views that you are using
@@ -73,33 +81,62 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         public TextView getNameTextView() {
             return nameTextView;
         }
+
         public TextView getEmailTextView() {
             return emailTextView;
         }
+
         public TextView getPhoneTextView() {
             return phoneTextView;
         }
+
         public ImageView getImageView() {
             return imageView;
         }
+
         public ImageButton getFavoriteButton() {
             return favoriteButton;
         }
-        public ConstraintLayout getArtistInfo() { return artistInfo; }
+
+        public ConstraintLayout getArtistInfo() {
+            return artistInfo;
+        }
     }
 
     /**
      * Initialize the dataset of the Adapter.
      *
      * @param jsonArray JsonArray containing the data to populate views to be used
-     * by RecyclerView. -ET
+     *                  by RecyclerView. -ET
      */
     public ArtistAdapter(JsonArray jsonArray) throws JSONException {
         localDataSet = jsonArray;
         wholeSet = jsonArray.deepCopy();
         filteredByStyle = jsonArray.deepCopy();
         filteredByPerson = jsonArray.deepCopy();
-        Log.d("esate", "Adapter constructor");
+        filteredByDistance = jsonArray.deepCopy();
+
+        // Getting the user's location from Firebase
+        myRef.child("users").child("clients").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                try {
+                    String json = gson.toJson(snapshot.getValue());
+                    JsonObject jsonObject = gson.fromJson(json, JsonObject.class);
+                    JsonObject client = jsonObject.getAsJsonObject(userId);
+                    location = client.getAsJsonObject("latLng");
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.d("esate", "ei onnistu käyttäjän paikannus");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     // Create new views (invoked by the layout manager) -ET
@@ -188,7 +225,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
 
     // Filter the recyclerview list by the list of filters given as parameter -ET
     // TODO: Find ways to reduce the amount of resetting arrays used in the method. -ET
-    public void filterList(ArrayList<String> filterList) {
+    public void filterList(ArrayList<String> filterList, int distanceFilter) {
 
         // Create array for comparing different titles for female gender from dataset.
         ArrayList<String> female = new ArrayList<>();
@@ -198,95 +235,169 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
 
         // If there is a filter option set, iterate through the filter arrays and remove items
         // not matching filter criteria. -ET
-        if (!filterList.isEmpty()) {
-
+        if (!filterList.isEmpty() || distanceFilter != 0) {
+            localDataSet = wholeSet.deepCopy();
             // TODO: Can the two iterator blocks be combined?
-                filteredByStyle = wholeSet.deepCopy();
-                Iterator i = filteredByStyle.iterator();
-                while (i.hasNext()) {
-                    boolean remove = true;
-                    JsonElement artist = (JsonElement) i.next();
-                    try {
-                        JsonArray styles = artist.getAsJsonObject().getAsJsonArray("styles");
-                        for (JsonElement style : styles) {
-                            if (filterList.contains(style.getAsString())) {
-                                remove = false;
-                            }
-                        }
-                    } catch (Exception e) {
-                    }
-                    if (remove) {
-                        i.remove();
-                    }
-                }
-
-                filteredByPerson = wholeSet.deepCopy();
-                Iterator j = filteredByPerson.iterator();
-                while (j.hasNext()) {
-                    boolean remove = true;
-                    JsonElement artist = (JsonElement) j.next();
-                    String title;
-                    try {
-                        title = artist.getAsJsonObject().getAsJsonObject("name").get("title").getAsString();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        title = "Other";
-                    }
-                    if (female.contains(title)) {
-                        title = "Female";
-                    } else if (title.equals("Mr")){
-                        title = "Male";
-                    } else {
-                        title = "Other";
-                    }
-                    try {
-                        if (filterList.contains(title)) {
+            filteredByStyle = wholeSet.deepCopy();
+            Iterator i = filteredByStyle.iterator();
+            while (i.hasNext()) {
+                boolean remove = true;
+                JsonElement artist = (JsonElement) i.next();
+                try {
+                    JsonArray styles = artist.getAsJsonObject().getAsJsonArray("styles");
+                    for (JsonElement style : styles) {
+                        if (filterList.contains(style.getAsString())) {
                             remove = false;
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
-                    if (remove) {
-                        j.remove();
+                } catch (Exception e) {
+                }
+                if (remove) {
+                    i.remove();
+                }
+            }
+
+            filteredByPerson = wholeSet.deepCopy();
+            Iterator j = filteredByPerson.iterator();
+            while (j.hasNext()) {
+                boolean remove = true;
+                JsonElement artist = (JsonElement) j.next();
+                String title;
+                try {
+                    title = artist.getAsJsonObject().getAsJsonObject("name").get("title").getAsString();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    title = "Other";
+                }
+                if (female.contains(title)) {
+                    title = "Female";
+                } else if (title.equals("Mr")) {
+                    title = "Male";
+                } else {
+                    title = "Other";
+                }
+                try {
+                    if (filterList.contains(title)) {
+                        remove = false;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                if (remove) {
+                    j.remove();
+                }
+            }
+
+            filteredByDistance = wholeSet.deepCopy();
+            Iterator k = filteredByDistance.iterator();
+            while (k.hasNext()) {
+                boolean remove = true;
+                double userLat = location.get("latitude").getAsDouble();
+                double userLng = location.get("longitude").getAsDouble();
+                JsonElement artist = (JsonElement) k.next();
+                JsonObject artistLatLng = new JsonObject();
+                double artistLat = 0;
+                double artistLng = 0;
+
+                // Trying and catching to find the coordinates for artist
+                try {
+                    JsonObject artistLocation = artist.getAsJsonObject().getAsJsonObject("location");
+                    artistLatLng = artistLocation.getAsJsonObject("coordinates");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    try {
+                        artistLatLng = artist.getAsJsonObject().getAsJsonObject("latLng");
+                    } catch (Exception er) {
+                        er.printStackTrace();
                     }
                 }
+                try {
+                    artistLat = artistLatLng.get("latitude").getAsDouble();
+                    artistLng = artistLatLng.get("longitude").getAsDouble();
+                } catch (Exception err) {
+                    err.printStackTrace();
+                }
+
+                // Call getDistance method
+                double distance = getDistance(
+                        userLat,
+                        artistLat,
+                        userLng,
+                        artistLng
+                );
+                if (distance < distanceFilter) remove = false;
+                if (remove) k.remove();
+            }
 
             /*
-            Whe two filters are set, compare to filtered sets and find common items.
+            When filters are set, compare the filtered lists and find common items.
             Set common items as dataset. -ET
              */
 
-            // Find common elements by iterating arrays filteredByPerson and filteredByStyle -ET
-            JsonArray commonElements = new JsonArray();
-            for (int p=0; p<filteredByPerson.size(); p++) {
-                for (int s=0; s<filteredByStyle.size(); s++) {
-                    if (filteredByPerson.get(p).getAsJsonObject().getAsJsonObject("name").equals(filteredByStyle.get(s).getAsJsonObject().getAsJsonObject("name"))) {
-                        commonElements.add(filteredByPerson.get(p));
-                    }
+            if (!filteredByPerson.isEmpty() && !filteredByStyle.isEmpty()) {
+                localDataSet = getCommonElements(filteredByPerson, filteredByStyle).deepCopy();
+            } else {
+                // If other filter array is empty, reset it and set the other one as dataset -ET
+                if (filteredByStyle.isEmpty() && !filteredByPerson.isEmpty()) {
+                    localDataSet = filteredByPerson.deepCopy();
+                }
+                if (filteredByPerson.isEmpty() && !filteredByStyle.isEmpty()) {
+                    localDataSet = filteredByStyle.deepCopy();
                 }
             }
-
-            // Set common elements as new dataset for adapter -ET
-            localDataSet = commonElements.deepCopy();
-
-            // If other filter array is empty, reset it and set the other one as dataset -ET
-            if (filteredByStyle.isEmpty()) {
-                localDataSet = filteredByPerson.deepCopy();
-            }
-            if (filteredByPerson.isEmpty()) {
-                localDataSet = filteredByStyle.deepCopy();
-            }
-
-        // If filterList is empty, reset all arrays to contain all items -ET
+            if (!localDataSet.isEmpty() && !filteredByDistance.isEmpty())
+                localDataSet = getCommonElements(filteredByDistance, localDataSet);
         } else {
             localDataSet = wholeSet.deepCopy();
-            filteredByPerson = wholeSet.deepCopy();
-            filteredByStyle = wholeSet.deepCopy();
         }
         notifyDataSetChanged();
-
     }
 
+    public JsonArray getCommonElements(JsonArray arr1, JsonArray arr2) {
+
+        // Create an array to to hold found common items -ET
+        JsonArray commonElements = new JsonArray();
+
+        // Nested loopings to find common items -ET
+        for (int i = 0; i < arr1.size(); i++) {
+            for (int j = 0; j < arr2.size(); j++) {
+                if (arr1.get(i).getAsJsonObject().getAsJsonObject("name").equals(arr2.get(j).getAsJsonObject().getAsJsonObject("name"))) {
+                    commonElements.add(arr1.get(i));
+                }
+            }
+        }
+        return commonElements;
+    }
+
+    public static double getDistance(double lat1,
+                                     double lat2, double lon1,
+                                     double lon2) {
+
+        // The math module contains a function
+        // named toRadians which converts from
+        // degrees to radians.
+        lon1 = Math.toRadians(lon1);
+        lon2 = Math.toRadians(lon2);
+        lat1 = Math.toRadians(lat1);
+        lat2 = Math.toRadians(lat2);
+
+        // Haversine formula
+        double dlon = lon2 - lon1;
+        double dlat = lat2 - lat1;
+        double a = Math.pow(Math.sin(dlat / 2), 2)
+                + Math.cos(lat1) * Math.cos(lat2)
+                * Math.pow(Math.sin(dlon / 2), 2);
+
+        double c = 2 * Math.asin(Math.sqrt(a));
+
+        // Radius of earth in kilometers. Use 3956
+        // for miles
+        double r = 6371;
+
+        // calculate the result
+        return (c * r);
+    }
+  
     public void isFavourite(String email) {
         DatabaseReference myRef = database.getReference();
         String userEmail = mAuth.getCurrentUser().getEmail();
@@ -433,5 +544,4 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
     public String getUserRole() {
         return userRole[0];
     }
-
 }
