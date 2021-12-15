@@ -46,4 +46,5 @@
     <string name="lastName">Last name</string>
     <string name="nameInputError">You must input your name and phone number</string>
     <string name="phoneNumber">Phone</string>
+    <string name="reset">RESET</string>
 </resources>
