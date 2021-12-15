@@ -96,9 +96,13 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
      * @param jsonArray JsonArray containing the data to populate views to be used
      * by RecyclerView. -ET
      */
-    public ArtistAdapter(JSONArray jsonArray) throws JSONException {
-        String json = gson.toJson(jsonArray);
-        JsonArray jsonArr = gson.fromJson(json, JsonArray.class);
+    public ArtistAdapter(String jsonArray) throws JSONException {
+        Log.i("tag", String.valueOf(jsonArray));
+        //String json = gson.toJson(jsonArray);
+        JsonArray jsonArr = gson.fromJson(jsonArray, JsonArray.class);
+        Log.i("tag2", String.valueOf(jsonArr));
+        //JsonArray jsonArr = jsonarr.getAsJsonArray();
+
         localDataSet = jsonArr;
         wholeSet = localDataSet.deepCopy();
         filteredByStyle = localDataSet.deepCopy();

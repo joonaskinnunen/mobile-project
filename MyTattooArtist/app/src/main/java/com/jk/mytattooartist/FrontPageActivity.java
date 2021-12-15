@@ -2,6 +2,7 @@ package com.jk.mytattooartist;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -52,9 +53,17 @@ public class FrontPageActivity extends BaseActivity {
         ActionBar actionBar = getSupportActionBar();
 
         // Get the Firebase data through intent
-        Bundle extras = getIntent().getExtras();
-        ArrayList<String> arrayList = extras.getStringArrayList("Data");
-        jsonArray2 = new JSONArray(arrayList);
+        String arrayList = getIntent().getExtras().getString("Data");
+        //String arrayList = extras.getString("array");
+        Log.i("tagdata", String.valueOf(arrayList));
+        /*try {
+            jsonArray2 = new JSONArray(arrayList);
+            Log.i("tagdata", String.valueOf(jsonArray2));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.i("tagerror", String.valueOf(jsonArray2));
+        }*/
+        Log.i("tagjson", String.valueOf(arrayList));
         filteredData = jsonArray2;
 
         // Hide the back button in action bar -JK
@@ -63,12 +72,19 @@ public class FrontPageActivity extends BaseActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         // Set adapter for recyclerview
+
         try {
-            artistAdapter = new ArtistAdapter(jsonArray2);
+            artistAdapter = new ArtistAdapter(arrayList);
             recyclerView.setAdapter(artistAdapter);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        /*try {
+            Log.i("tagjson", String.valueOf(jsonArray2));
+            //artistAdapter = new ArtistAdapter(jsonArray2);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }*/
 
         fabFilters = findViewById(R.id.fabFilters);
         fabDistance = findViewById(R.id.fabDistance);

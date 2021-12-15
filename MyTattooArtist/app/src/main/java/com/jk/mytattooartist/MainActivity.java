@@ -100,10 +100,12 @@ public class MainActivity extends BaseActivity {
     // Take the data to frontpage activity
     public void startFrontPage(JSONArray dbData) {
 
-        Bundle extra = new Bundle();
-        extra.putString("array", String.valueOf(dbData));
+        //Bundle extra = new Bundle();
+        //extra.putString("array", String.valueOf(dbData));
         Intent intent = new Intent(this, FrontPageActivity.class);
-        intent.putExtra("Data", extra);
+        //intent.putExtra("Data", extra);
+        intent.putExtra("Data", String.valueOf(dbData));
+
 
         startActivity(intent);
     }

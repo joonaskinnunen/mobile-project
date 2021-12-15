@@ -1,4 +1,4 @@
-package com.jk.mytattooartist;
+/*package com.jk.mytattooartist;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -52,3 +52,4 @@ public class FavouritesActivity extends AppCompatActivity {
         Log.d("extras favourites: ", String.valueOf(arrayList.get(0)));
     }
 }
+*/

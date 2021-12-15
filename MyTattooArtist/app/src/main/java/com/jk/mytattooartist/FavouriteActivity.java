@@ -46,9 +46,10 @@ public class FavouriteActivity extends BaseActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Get the data from through intent
-        Bundle extras = getIntent().getExtras();
-        ArrayList arrayList = extras.getStringArrayList("Data");
-        JsonArray jsonArray = new Gson().toJsonTree(arrayList).getAsJsonArray();
+        //Bundle extras = getIntent().getExtras();
+        //ArrayList arrayList = extras.getStringArrayList("Data");
+        //JsonArray jsonArray = new Gson().toJsonTree(arrayList).getAsJsonArray();
+        String arrayList = getIntent().getExtras().getString("Data");
 
         // Get the user email -JK
         String userEmail = mAuth.getCurrentUser().getEmail();
@@ -76,8 +77,11 @@ public class FavouriteActivity extends BaseActivity {
                 // Get users favourite artists emails from DB to the favouritesEmails variable -JK
                 favouritesEmails = (ArrayList<String>) dataSnapshot.child(key).child("favourites").getValue();
 
+
+                Log.i("arraylist",arrayList);
                 // Check if the user has any favourite artists -JK
-                if (favouritesEmails != null) {
+                /*if (favouritesEmails != null) {
+
 
                     // Loop through all artists and compare artists emails to emails in favouritesEmails ArrayList -JK
                     for (int i = 0; i < favouritesEmails.size(); i++) {
@@ -103,12 +107,12 @@ public class FavouriteActivity extends BaseActivity {
                 } else {
                     // Hide the RecyclerView when user has no favourites -JK
                     recyclerView.setVisibility(View.INVISIBLE);
-                }
+                }*/
 
                 // Convert ArrayList to JsonArray and add data to the adapter -JK
-                JSONArray jsonArray2 = new JSONArray(arrayList);
+                //JSONArray jsonArray2 = new JSONArray(arrayList);
                 try {
-                    recyclerView.setAdapter(new ArtistAdapter(jsonArray2));
+                    recyclerView.setAdapter(new ArtistAdapter(arrayList));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
