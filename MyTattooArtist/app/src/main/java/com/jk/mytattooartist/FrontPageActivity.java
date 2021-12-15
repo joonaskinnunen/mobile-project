@@ -1,8 +1,6 @@
 package com.jk.mytattooartist;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -101,7 +99,11 @@ public class FrontPageActivity extends BaseActivity {
                         RangeSlider rangeSlider = popupView.findViewById(R.id.rangeSlider);
                         TextView textView = popupView.findViewById(R.id.setDistance);
                         rangeSlider.setValues(distance);
-                        textView.setText("Distance set at: " + (int) distance + " km");
+                        if (distance == 0) {
+                            textView.setText("Distance not set.");
+                        } else {
+                            textView.setText("Distance set at: " + (int) distance + " km");
+                        }
                         rangeSlider.setLabelFormatter(new LabelFormatter() {
                             @NonNull
                             @Override
@@ -109,7 +111,11 @@ public class FrontPageActivity extends BaseActivity {
                                 distance = value;
 //                                Log.d("esate", "value: " + distance);
                                 artistAdapter.filterList(checked, (int) distance);
-                                textView.setText("Distance set at: " + (int) value + " km");
+                                if (distance == 0) {
+                                    textView.setText("Distance not set.");
+                                } else {
+                                    textView.setText("Distance set at: " + (int) value + " km");
+                                }
                                 return (int) value + " km";
                             }
                         });
