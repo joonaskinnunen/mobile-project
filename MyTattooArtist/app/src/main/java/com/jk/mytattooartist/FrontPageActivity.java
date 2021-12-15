@@ -1,5 +1,6 @@
 package com.jk.mytattooartist;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
