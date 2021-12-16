@@ -1,6 +1,7 @@
 package com.jk.mytattooartist;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -24,6 +25,7 @@ import com.google.android.material.slider.RangeSlider;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
@@ -35,7 +37,8 @@ public class FrontPageActivity extends BaseActivity {
     ArtistAdapter artistAdapter;
     FloatingActionButton fabFilters, fabDistance, fabGender, fabStyles;
     Boolean isFABOpen = false;
-    JsonArray jsonArray2 = new JsonArray();
+    JSONArray filteredData = new JSONArray();
+    JSONArray jsonArray2 = new JSONArray();
 
     // Integer for filtering by distance -ET
     float distance = 0;
@@ -52,10 +55,19 @@ public class FrontPageActivity extends BaseActivity {
         setContentView(R.layout.front_page);
         ActionBar actionBar = getSupportActionBar();
 
-        // Get the Firebase data through intent -ET
-        Bundle extras = getIntent().getExtras();
-        ArrayList<String> arrayList = extras.getStringArrayList("Data");
-        jsonArray2 = new Gson().toJsonTree(arrayList).getAsJsonArray();
+        // Get the Firebase data through intent
+        String arrayList = getIntent().getExtras().getString("Data");
+        //String arrayList = extras.getString("array");
+        Log.i("tagdata", String.valueOf(arrayList));
+        /*try {
+            jsonArray2 = new JSONArray(arrayList);
+            Log.i("tagdata", String.valueOf(jsonArray2));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.i("tagerror", String.valueOf(jsonArray2));
+        }*/
+        Log.i("tagjson", String.valueOf(arrayList));
+        filteredData = jsonArray2;
 
         // Hide the back button in action bar -JK
         actionBar.setDisplayHomeAsUpEnabled(false);
@@ -65,7 +77,7 @@ public class FrontPageActivity extends BaseActivity {
 
         // Set adapter for recyclerview -ET
         try {
-            artistAdapter = new ArtistAdapter(jsonArray2);
+            artistAdapter = new ArtistAdapter(arrayList);
             recyclerView.setAdapter(artistAdapter);
         } catch (JSONException e) {
             e.printStackTrace();

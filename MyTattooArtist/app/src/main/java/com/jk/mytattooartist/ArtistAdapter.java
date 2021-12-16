@@ -1,6 +1,5 @@
 package com.jk.mytattooartist;
 
-import android.content.ClipData;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,7 +31,6 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Map;
 
 
 public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder> {
@@ -106,15 +104,16 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
     /**
      * Initialize the dataset of the Adapter.
      *
-     * @param jsonArray JsonArray containing the data to populate views to be used
-     *                  by RecyclerView. -ET
+     * @param jsonArray String containing the data to populate views to be used
+     * by RecyclerView. -ET
      */
-    public ArtistAdapter(JsonArray jsonArray) throws JSONException {
-        localDataSet = jsonArray;
-        wholeSet = jsonArray.deepCopy();
-        filteredByStyle = jsonArray.deepCopy();
-        filteredByPerson = jsonArray.deepCopy();
-        filteredByDistance = jsonArray.deepCopy();
+    public ArtistAdapter(String jsonArray) throws JSONException {
+        JsonArray jsonArr = gson.fromJson(jsonArray, JsonArray.class);
+
+        localDataSet = jsonArr;
+        wholeSet = localDataSet.deepCopy();
+        filteredByStyle = localDataSet.deepCopy();
+        filteredByPerson = localDataSet.deepCopy();
 
         // Getting the user's location from Firebase
         myRef.child("users").child("clients").addValueEventListener(new ValueEventListener() {
@@ -161,6 +160,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         // Get the String format values of desired fields -ET
         String firstName = artist.getAsJsonObject("name").get("first").getAsString();
         String lastName = artist.getAsJsonObject("name").get("last").getAsString();
+        Log.d("esate", "aritstsi name: " + firstName + " " + lastName);
         String email = artist.get("email").getAsString();
         String phone = artist.get("phone").getAsString();
 

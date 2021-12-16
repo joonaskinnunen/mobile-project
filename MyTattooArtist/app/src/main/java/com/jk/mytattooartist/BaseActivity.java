@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -29,6 +30,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -218,7 +223,7 @@ public class BaseActivity  extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance("https://mytattooartist-d2298-default-rtdb.europe-west1.firebasedatabase.app/");
         DatabaseReference myRef = database.getReference();
 
-        // Read from the database
+        /*// Read from the database
         myRef.child("users").child("artists").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -235,15 +240,49 @@ public class BaseActivity  extends AppCompatActivity {
                 // Failed to read value
                 Log.w("ERROR: ", "Failed to read value.", error.toException());
             }
+        });*/
+
+        // Read from the database values inside "artists"
+        myRef.child("users").child("artists").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
+                } else {
+                    Log.d("firebase", String.valueOf(task.getResult().getValue()));
+                    // If there are no values, set error message into textview. If success, goto startFrontpage()
+                    TextView tv = findViewById(R.id.textView);
+                    //    ArrayList<String> value = new ArrayList(Collections.singleton(((Map<String, ClipData.Item>) task.getResult().getValue())));
+                    JSONObject obj=new JSONObject((Map<String, ClipData.Item>)task.getResult().getValue());
+                    JSONArray array = new JSONArray();
+                    try {
+                        array=new JSONArray("["+obj.toString()+"]");
+                        Log.d("JSONArray", String.valueOf(array));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    //    JSONArray arr = new JSONArray();
+                    //    arr = (JSONArray) task.getResult().getValue();
+                    Log.d("obj", String.valueOf(obj));
+                    //    Log.d("arrlen", String.valueOf(value.size()));
+                    //    Log.d("arraylist", String.valueOf(value));
+                    if (array != null) startFavourites(array);
+                    else tv.setText("Ei dataa");
+                }
+            }
+
+
+
+
         });
 
     }
 
-    public void startFavourites(ArrayList dbData) {
-        Bundle extra = new Bundle();
-        extra.putStringArrayList("array", dbData);
+    public void startFavourites(JSONArray dbData) {
+        //Bundle extra = new Bundle();
+        //extra.putString("array", String.valueOf(dbData));
         Intent intent = new Intent(this, FavouriteActivity.class);
-        intent.putExtra("Data", dbData);
+        intent.putExtra("Data", String.valueOf(dbData));
 
         startActivity(intent);
     }

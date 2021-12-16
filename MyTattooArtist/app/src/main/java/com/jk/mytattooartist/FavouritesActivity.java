@@ -1,4 +1,4 @@
-package com.jk.mytattooartist;
+/*package com.jk.mytattooartist;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.lang.reflect.Array;
@@ -41,15 +42,14 @@ public class FavouritesActivity extends AppCompatActivity {
                 }
             }
         }
-        JsonArray jsonArray2 = new Gson().toJsonTree(filteredList).getAsJsonArray();
+        JSONArray jsonArray2 = new JSONArray(filteredList);
         try {
             recyclerView.setAdapter(new ArtistAdapter(jsonArray2));
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        Log.d("GSON favourites: ",String.valueOf(jsonArray2.get(0)));
-
         Log.d("extras favourites: ", String.valueOf(arrayList.get(0)));
     }
 }
+*/

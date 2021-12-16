@@ -14,11 +14,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class FavouriteActivity extends BaseActivity {
 
@@ -44,12 +47,20 @@ public class FavouriteActivity extends BaseActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Get the data from through intent
-        Bundle extras = getIntent().getExtras();
-        ArrayList arrayList = extras.getStringArrayList("Data");
-        JsonArray jsonArray = new Gson().toJsonTree(arrayList).getAsJsonArray();
+        //Bundle extras = getIntent().getExtras();
+        //ArrayList arrayList = extras.getStringArrayList("Data");
+        //JsonArray jsonArray = new Gson().toJsonTree(arrayList).getAsJsonArray();
+        String arrayList = getIntent().getExtras().getString("Data");
+        JSONArray artistArray = null;
+        try {
+            artistArray = new JSONArray(arrayList);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         // Get the user email -JK
         String userEmail = mAuth.getCurrentUser().getEmail();
+        Log.d("esate", "userEmail: " + userEmail);
 
         // Get the users favourite artists from DB -JK
         myRef.child("users").child("clients").orderByChild("email").equalTo(userEmail).addValueEventListener(new ValueEventListener() {
@@ -57,6 +68,13 @@ public class FavouriteActivity extends BaseActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
+                Log.d("esate", "dataSnapshot children: " + dataSnapshot.getChildren().toString());
+                Map<String,Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                List<String> keys = new ArrayList(map.keySet());
+                ArrayList<Object> arList = new ArrayList<>();
+                for (int i=0;i<map.size();i++) {
+                    arList.add(map.get(keys.get(i)));
+                }
 
                 // Arraylist to hold users favourite artists emails -JK
                 ArrayList<String> favouritesEmails;
@@ -74,14 +92,31 @@ public class FavouriteActivity extends BaseActivity {
                 // Get users favourite artists emails from DB to the favouritesEmails variable -JK
                 favouritesEmails = (ArrayList<String>) dataSnapshot.child(key).child("favourites").getValue();
 
+                JSONArray arr = new JSONArray();
+                try {
+                    arr = new JSONArray(arrayList);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
                 // Check if the user has any favourite artists -JK
                 if (favouritesEmails != null) {
 
                     // Loop through all artists and compare artists emails to emails in favouritesEmails ArrayList -JK
                     for (int i = 0; i < favouritesEmails.size(); i++) {
-                        for (int j = 0; j < arrayList.size(); j++) {
-                            JsonObject jsonObj = jsonArray.get(j).getAsJsonObject();
-                            String email = String.valueOf(jsonObj.get("email"));
+                        for (int j = 0; j < arr.length(); j++) {
+                            JSONObject jsonObj = null;
+                            try {
+                                jsonObj = new JSONObject(arr.get(j).toString());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            String email = null;
+                            try {
+                                email = String.valueOf(jsonObj.get("email"));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
 
                             // Remove extra characters from email string -JK
                             email = email.replaceAll("\"", "");
@@ -89,7 +124,11 @@ public class FavouriteActivity extends BaseActivity {
                             // If emails match, add emails to the filteredList -JK
                             if(favouritesEmails.get(i) != null) {
                                 if (favouritesEmails.get(i).equals(email)) {
-                                    filteredList.add(arrayList.get(j));
+                                    try {
+                                        filteredList.add(arr.get(j));
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
                         }
@@ -104,9 +143,9 @@ public class FavouriteActivity extends BaseActivity {
                 }
 
                 // Convert ArrayList to JsonArray and add data to the adapter -JK
-                JsonArray jsonArray2 = new Gson().toJsonTree(filteredList).getAsJsonArray();
+                //JSONArray jsonArray2 = new JSONArray(arrayList);
                 try {
-                    recyclerView.setAdapter(new ArtistAdapter(jsonArray2));
+                    recyclerView.setAdapter(new ArtistAdapter(filteredList.toString()));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
