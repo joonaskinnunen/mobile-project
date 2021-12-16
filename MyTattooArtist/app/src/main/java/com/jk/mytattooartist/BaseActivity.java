@@ -1,7 +1,6 @@
 package com.jk.mytattooartist;
 
 import android.annotation.SuppressLint;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,8 +31,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -250,23 +247,18 @@ public class BaseActivity  extends AppCompatActivity {
                     Log.e("firebase", "Error getting data", task.getException());
                 } else {
                     Log.d("firebase", String.valueOf(task.getResult().getValue()));
+                    Map<String,Object> map = (Map<String, Object>) task.getResult().getValue();
+                    List<String> keys = new ArrayList(map.keySet());
+                    ArrayList<Object> arList = new ArrayList<>();
+                    for (int i=0;i<map.size();i++) {
+                        arList.add(map.get(keys.get(i)));
+                    }
+                    JSONArray jarray = new JSONArray(arList);
+
                     // If there are no values, set error message into textview. If success, goto startFrontpage()
                     TextView tv = findViewById(R.id.textView);
-                    //    ArrayList<String> value = new ArrayList(Collections.singleton(((Map<String, ClipData.Item>) task.getResult().getValue())));
-                    JSONObject obj=new JSONObject((Map<String, ClipData.Item>)task.getResult().getValue());
-                    JSONArray array = new JSONArray();
-                    try {
-                        array=new JSONArray("["+obj.toString()+"]");
-                        Log.d("JSONArray", String.valueOf(array));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    //    JSONArray arr = new JSONArray();
-                    //    arr = (JSONArray) task.getResult().getValue();
-                    Log.d("obj", String.valueOf(obj));
-                    //    Log.d("arrlen", String.valueOf(value.size()));
-                    //    Log.d("arraylist", String.valueOf(value));
-                    if (array != null) startFavourites(array);
+
+                    if (jarray != null) startFavourites(jarray);
                     else tv.setText("Ei dataa");
                 }
             }
@@ -279,8 +271,7 @@ public class BaseActivity  extends AppCompatActivity {
     }
 
     public void startFavourites(JSONArray dbData) {
-        //Bundle extra = new Bundle();
-        //extra.putString("array", String.valueOf(dbData));
+
         Intent intent = new Intent(this, FavouriteActivity.class);
         intent.putExtra("Data", String.valueOf(dbData));
 
