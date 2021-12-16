@@ -19,8 +19,23 @@ import java.util.ArrayList;
 
 public class PopUpClass {
 
+    // new string Arraylist for checked values
+    ArrayList<String> checked = new ArrayList<>();
+
+    public PopUpClass(ArrayList<String> checked) {
+        this.checked = checked;
+    }
+
+    public ArrayList<String> getChecked() {
+        return checked;
+    }
+
+    public void setChecked(ArrayList<String> checked) {
+        this.checked = checked;
+    }
+
     //PopupWindow display method
-    public void showPopupWindow(final View view, int layout) {
+    public void showPopupWindow(final View view, int layout, ArtistAdapter artistAdapter) {
 
         //Create a View object yourself through inflater
         LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(view.getContext().LAYOUT_INFLATER_SERVICE);
@@ -56,8 +71,11 @@ public class PopUpClass {
                 arrayList.add(popupView.findViewById(R.id.cbFemale));
                 arrayList.add(popupView.findViewById(R.id.cbOther));
             }
-            // new string Arraylist for checked values
-            ArrayList<String> checked = new ArrayList<>();
+
+            // Iterate arrayList and compare to checked list. Set checked status accordingly
+            for (CheckBox checkBox: arrayList) {
+                if (checked.contains(checkBox.getText().toString())) checkBox.setChecked(true);
+            }
 
             // Iterate arraylist and set onclick listeners with onclick methods
             for (CheckBox checkBox: arrayList) {
@@ -71,6 +89,7 @@ public class PopUpClass {
                             checked.remove(checked.indexOf(checkBox.getText().toString()));
                             Toast.makeText(view.getContext(), "Your selections: " + checked, Toast.LENGTH_SHORT).show();
                         }
+//                        artistAdapter.filterList(checked);
                     }
                 });
             }
@@ -104,5 +123,4 @@ public class PopUpClass {
             }
         });
     }
-
 }

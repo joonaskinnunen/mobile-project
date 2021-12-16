@@ -14,8 +14,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
+
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,14 +69,12 @@ public class MainActivity extends BaseActivity {
                     for (int i=0;i<map.size();i++) {
                         arList.add(map.get(keys.get(i)));
                     }
-                    Gson gson = new Gson();
-                    String json = gson.toJson(arList);
-                    JsonArray jsonArray = gson.fromJson(json, JsonArray.class);
+                    JSONArray jarray = new JSONArray(arList);
 
                     // If there are no values, set error message into textview. If success, goto startFrontpage()
                     TextView tv = findViewById(R.id.textView);
 
-                    if (jsonArray != null) startFrontPage(jsonArray);
+                    if (jarray != null) startFrontPage(jarray);
                     else tv.setText("Ei dataa");
                 }
             }
@@ -84,7 +82,7 @@ public class MainActivity extends BaseActivity {
     }
 
     // Take the data to frontpage activity
-    public void startFrontPage(JsonArray dbData) {
+    public void startFrontPage(JSONArray dbData) {
 
         Intent intent = new Intent(this, FrontPageActivity.class);
         intent.putExtra("Data", String.valueOf(dbData));
