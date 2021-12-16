@@ -16,18 +16,32 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <Button
+                android:id="@+id/userProfileChangePasswordButton2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/burgundy"
+                android:onClick="changePasswordClickedArtist"
+                android:text="@string/changePasswordButton"
+                android:textColor="@color/light_gray"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView4"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/profileSocialsTag"
+                app:layout_constraintTop_toBottomOf="@+id/connectToInstagramButton" />
+
             <ImageView
                 android:id="@+id/imageView4"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                app:srcCompat="@drawable/background_shape"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="@id/instagramFeedWebView"
                 app:layout_constraintBottom_toTopOf="@id/RecyclerViewInstagramMedia"
-                app:layout_constraintVertical_weight="1"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintHorizontal_weight="1"
-                />
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/instagramFeedWebView"
+                app:layout_constraintVertical_bias="1.0"
+                app:layout_constraintVertical_weight="1"
+                app:srcCompat="@drawable/background_shape" />
 
             <TextView
                 android:id="@+id/profileNameTag"

@@ -1,12 +1,12 @@
 package com.jk.mytattooartist;
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -40,11 +40,14 @@ public class FrontPageActivity extends BaseActivity {
     JSONArray filteredData = new JSONArray();
     JSONArray jsonArray2 = new JSONArray();
 
-    // new string Arraylist for checked values
+    // Integer for filtering by distance -ET
+    float distance = 0;
+
+    // new string Arraylist for checked values -ET
     ArrayList<String> checked = new ArrayList<>();
 
     // Create an arraymap for storing floating action button views and
-    // the popup layouts they refer to
+    // the popup layouts they refer to. -ET
     ArrayMap<View, Integer> arrayMap = new ArrayMap<>();
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,26 +74,22 @@ public class FrontPageActivity extends BaseActivity {
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        // Set adapter for recyclerview
 
+        // Set adapter for recyclerview -ET
         try {
             artistAdapter = new ArtistAdapter(arrayList);
             recyclerView.setAdapter(artistAdapter);
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        /*try {
-            Log.i("tagjson", String.valueOf(jsonArray2));
-            //artistAdapter = new ArtistAdapter(jsonArray2);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }*/
 
+        // Floating action buttons -ET
         fabFilters = findViewById(R.id.fabFilters);
         fabDistance = findViewById(R.id.fabDistance);
         fabGender = findViewById(R.id.fabGender);
         fabStyles = findViewById(R.id.fabStyles);
 
+        // Map holding filter fabs and layout ids. -ET
         arrayMap.put(fabDistance, R.layout.popup_window_distance);
         arrayMap.put(fabGender, R.layout.popup_window_person);
         arrayMap.put(fabStyles, R.layout.popup_window_styles);
@@ -104,7 +103,7 @@ public class FrontPageActivity extends BaseActivity {
             key.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //Create a View object yourself through inflater
+                    //Create a View object through inflater
                     LayoutInflater inflater = (LayoutInflater) view.getContext().getSystemService(view.getContext().LAYOUT_INFLATER_SERVICE);
                     View popupView = inflater.inflate(layout, null);
 
@@ -112,12 +111,22 @@ public class FrontPageActivity extends BaseActivity {
                     if (layout == R.layout.popup_window_distance) {
                         RangeSlider rangeSlider = popupView.findViewById(R.id.rangeSlider);
                         TextView textView = popupView.findViewById(R.id.setDistance);
+                        getFormatted(distance,textView,rangeSlider);
+                        Button clearButton = popupView.findViewById(R.id.clearButton);
+                        clearButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                distance = 0;
+                                getFormatted(0,textView,rangeSlider);
+                            }
+                        });
+
                         rangeSlider.setLabelFormatter(new LabelFormatter() {
                             @NonNull
                             @Override
                             public String getFormattedValue(float value) {
-                                textView.setText("Distance set at: " + (int) value + " km");
-                                return (int) value + " km";
+                                distance = value;
+                                return getFormatted(distance, textView, rangeSlider);
                             }
                         });
                     }
@@ -161,7 +170,7 @@ public class FrontPageActivity extends BaseActivity {
                                         checked.remove(checkBox.getText().toString());
                                         Toast.makeText(view.getContext(), "Your selections: " + checked, Toast.LENGTH_SHORT).show();
                                     }
-                                    artistAdapter.filterList(checked);
+                                    artistAdapter.filterList(checked, (int) distance);
                                 }
                             });
                         }
@@ -228,5 +237,17 @@ public class FrontPageActivity extends BaseActivity {
         for (Map.Entry<View,Integer> entry: arrayMap.entrySet()) {
             entry.getKey().animate().translationY(0);
         }
+    }
+
+    private String getFormatted(float dist, TextView textView, RangeSlider slider) {
+        // Log.d("esate", "value: " + distance);
+        slider.setValues(dist);
+        artistAdapter.filterList(checked, (int) dist);
+        if (dist == 0) {
+            textView.setText("Distance not set.");
+        } else {
+            textView.setText("Distance set at: " + (int) dist + " km");
+        }
+        return (int) dist + " km";
     }
 }
