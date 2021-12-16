@@ -220,25 +220,6 @@ public class BaseActivity  extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance("https://mytattooartist-d2298-default-rtdb.europe-west1.firebasedatabase.app/");
         DatabaseReference myRef = database.getReference();
 
-        /*// Read from the database
-        myRef.child("users").child("artists").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-
-                ArrayList<String> value = new ArrayList(((Map<String, ClipData.Item>) dataSnapshot.getValue()).values());
-                startFavourites(value);
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w("ERROR: ", "Failed to read value.", error.toException());
-            }
-        });*/
-
         // Read from the database values inside "artists"
         myRef.child("users").child("artists").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
@@ -262,10 +243,6 @@ public class BaseActivity  extends AppCompatActivity {
                     else tv.setText("Ei dataa");
                 }
             }
-
-
-
-
         });
 
     }
