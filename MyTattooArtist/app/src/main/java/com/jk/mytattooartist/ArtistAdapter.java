@@ -1,6 +1,5 @@
 package com.jk.mytattooartist;
 
-import android.content.ClipData;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,13 +25,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Map;
 
 
 public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder> {
@@ -93,21 +89,16 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
     /**
      * Initialize the dataset of the Adapter.
      *
-     * @param jsonArray JsonArray containing the data to populate views to be used
+     * @param jsonArray String containing the data to populate views to be used
      * by RecyclerView. -ET
      */
     public ArtistAdapter(String jsonArray) throws JSONException {
-        Log.i("tag", String.valueOf(jsonArray));
-        //String json = gson.toJson(jsonArray);
         JsonArray jsonArr = gson.fromJson(jsonArray, JsonArray.class);
-        Log.i("tag2", String.valueOf(jsonArr));
-        //JsonArray jsonArr = jsonarr.getAsJsonArray();
 
         localDataSet = jsonArr;
         wholeSet = localDataSet.deepCopy();
         filteredByStyle = localDataSet.deepCopy();
         filteredByPerson = localDataSet.deepCopy();
-        Log.d("esate", "Adapter constructor");
     }
 
     // Create new views (invoked by the layout manager) -ET
@@ -128,13 +119,11 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         // Get the JsonObjects -ET
         JsonObject artist = localDataSet.get(position).getAsJsonObject();
         JsonObject pic = artist.getAsJsonObject("picture");
-        Log.d("keyset", artist.keySet().toString());
-
-        Log.d("artisttt", artist.toString());
 
         // Get the String format values of desired fields -ET
         String firstName = artist.getAsJsonObject("name").get("first").getAsString();
         String lastName = artist.getAsJsonObject("name").get("last").getAsString();
+        Log.d("esate", "aritstsi name: " + firstName + " " + lastName);
         String email = artist.get("email").getAsString();
         String phone = artist.get("phone").getAsString();
 
