@@ -46,21 +46,10 @@ public class FavouriteActivity extends BaseActivity {
         recyclerView = findViewById(R.id.recyclerViewFavourite);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Get the data from through intent
-        //Bundle extras = getIntent().getExtras();
-        //ArrayList arrayList = extras.getStringArrayList("Data");
-        //JsonArray jsonArray = new Gson().toJsonTree(arrayList).getAsJsonArray();
         String arrayList = getIntent().getExtras().getString("Data");
-        JSONArray artistArray = null;
-        try {
-            artistArray = new JSONArray(arrayList);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 
         // Get the user email -JK
         String userEmail = mAuth.getCurrentUser().getEmail();
-        Log.d("esate", "userEmail: " + userEmail);
 
         // Get the users favourite artists from DB -JK
         myRef.child("users").child("clients").orderByChild("email").equalTo(userEmail).addValueEventListener(new ValueEventListener() {
@@ -68,7 +57,6 @@ public class FavouriteActivity extends BaseActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                Log.d("esate", "dataSnapshot children: " + dataSnapshot.getChildren().toString());
                 Map<String,Object> map = (Map<String, Object>) dataSnapshot.getValue();
                 List<String> keys = new ArrayList(map.keySet());
                 ArrayList<Object> arList = new ArrayList<>();
@@ -143,7 +131,6 @@ public class FavouriteActivity extends BaseActivity {
                 }
 
                 // Convert ArrayList to JsonArray and add data to the adapter -JK
-                //JSONArray jsonArray2 = new JSONArray(arrayList);
                 try {
                     recyclerView.setAdapter(new ArtistAdapter(filteredList.toString()));
                 } catch (JSONException e) {

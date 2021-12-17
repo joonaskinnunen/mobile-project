@@ -1,7 +1,6 @@
 package com.jk.mytattooartist;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -22,8 +21,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.slider.LabelFormatter;
 import com.google.android.material.slider.RangeSlider;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,16 +54,7 @@ public class FrontPageActivity extends BaseActivity {
 
         // Get the Firebase data through intent
         String arrayList = getIntent().getExtras().getString("Data");
-        //String arrayList = extras.getString("array");
-        Log.i("tagdata", String.valueOf(arrayList));
-        /*try {
-            jsonArray2 = new JSONArray(arrayList);
-            Log.i("tagdata", String.valueOf(jsonArray2));
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.i("tagerror", String.valueOf(jsonArray2));
-        }*/
-        Log.i("tagjson", String.valueOf(arrayList));
+
         filteredData = jsonArray2;
 
         // Hide the back button in action bar -JK
@@ -134,20 +122,15 @@ public class FrontPageActivity extends BaseActivity {
                     // Get checked values for styles or person
                     if (layout == R.layout.popup_window_styles || layout == R.layout.popup_window_person) {
 
-                        // String tag for filtering
-                        String filterTag;
-
                         // Arraylist for checkboxes
                         ArrayList<CheckBox> arrayList = new ArrayList<>();
 
                         // Collect checkboxes from layout to arraylist
                         if (layout == R.layout.popup_window_styles) {
-                            filterTag = "styles";
                             arrayList.add(popupView.findViewById(R.id.cbBlackWhite));
                             arrayList.add(popupView.findViewById(R.id.cbWaterColor));
                             arrayList.add(popupView.findViewById(R.id.cbOldSchool));
                         } else {
-                            filterTag = "title";
                             arrayList.add(popupView.findViewById(R.id.cbMale));
                             arrayList.add(popupView.findViewById(R.id.cbFemale));
                             arrayList.add(popupView.findViewById(R.id.cbOther));
@@ -201,10 +184,6 @@ public class FrontPageActivity extends BaseActivity {
                             return false;
                         }
                     });
-                    // Pop up window
-/*                    PopUpClass popUpClass = new PopUpClass(checked);
-                    popUpClass.showPopupWindow(view, arrayMap.get(key), artistAdapter);*/
-
                 }
             });
         }
@@ -240,7 +219,6 @@ public class FrontPageActivity extends BaseActivity {
     }
 
     private String getFormatted(float dist, TextView textView, RangeSlider slider) {
-        // Log.d("esate", "value: " + distance);
         slider.setValues(dist);
         artistAdapter.filterList(checked, (int) dist);
         if (dist == 0) {
