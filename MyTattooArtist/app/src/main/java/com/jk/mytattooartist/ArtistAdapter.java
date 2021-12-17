@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -26,11 +27,14 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 
 public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder> {
@@ -48,8 +52,9 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
     JsonArray filteredByPerson;
     JsonArray filteredByDistance;
     private Gson gson = new Gson();
-    private Boolean favorite = false;
+    private Boolean favorite = true;
     JsonObject location = new JsonObject();
+    JsonArray favEmails = new JsonArray();
 
 
     /**
@@ -66,7 +71,6 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
 
         public ViewHolder(View view) {
             super(view);
-            // TODO: Define click listener for the ViewHolder's View
 
             nameTextView = view.findViewById(R.id.nameTextView);
             emailTextView = view.findViewById(R.id.emailTextView);
@@ -105,7 +109,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
      * Initialize the dataset of the Adapter.
      *
      * @param jsonArray String containing the data to populate views to be used
-     * by RecyclerView. -ET
+     *                  by RecyclerView. -ET
      */
     public ArtistAdapter(String jsonArray) throws JSONException {
         JsonArray jsonArr = gson.fromJson(jsonArray, JsonArray.class);
@@ -116,17 +120,18 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         filteredByPerson = localDataSet.deepCopy();
 
         // Getting the user's location from Firebase
-        myRef.child("users").child("clients").addValueEventListener(new ValueEventListener() {
+        myRef.child("users").child("clients").child(userId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 try {
                     String json = gson.toJson(snapshot.getValue());
-                    JsonObject jsonObject = gson.fromJson(json, JsonObject.class);
-                    JsonObject client = jsonObject.getAsJsonObject(userId);
+                    JsonObject client = gson.fromJson(json, JsonObject.class);
                     location = client.getAsJsonObject("latLng");
+                    favEmails = client.getAsJsonArray("favourites");
 
                 } catch (Exception e) {
                     e.printStackTrace();
+                    favEmails = new JsonArray();
                     Log.d("esate", "ei onnistu käyttäjän paikannus");
                 }
             }
@@ -139,9 +144,10 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
     }
 
     // Create new views (invoked by the layout manager) -ET
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        if(mAuth.getCurrentUser() != null) getUserRoleFromDB(mAuth.getCurrentUser().getEmail());
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
+        if (mAuth.getCurrentUser() != null) getUserRoleFromDB(mAuth.getCurrentUser().getEmail());
         // Create a new view, which defines the UI of the list item -ET
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.artist_item, viewGroup, false);
@@ -151,7 +157,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
 
     // Replace the contents of a view (invoked by the layout manager) -ET
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, final int position) {
+    public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int position) {
 
         // Get the JsonObjects -ET
         JsonObject artist = localDataSet.get(position).getAsJsonObject();
@@ -160,18 +166,21 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         // Get the String format values of desired fields -ET
         String firstName = artist.getAsJsonObject("name").get("first").getAsString();
         String lastName = artist.getAsJsonObject("name").get("last").getAsString();
-        Log.d("esate", "aritstsi name: " + firstName + " " + lastName);
         String email = artist.get("email").getAsString();
         String phone = artist.get("phone").getAsString();
 
-        isFavourite(email);
+        try {
+            favorite = isFava(favEmails,artist.get("email"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        if (!favorite) {
+        if (favorite) {
             viewHolder.getFavoriteButton().setImageResource(R.drawable.ic_star);
-            isFavourite(email);
+            //isFavourite(email);
         } else {
             viewHolder.getFavoriteButton().setImageResource(R.drawable.ic_star_border_black);
-            isFavourite(email);
+            //isFavourite(email);
         }
 
         // Set a placeholder image
@@ -192,14 +201,27 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         viewHolder.getFavoriteButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                favorite = isFava(favEmails,artist.get("email"));
                 if (!favorite) {
                     viewHolder.getFavoriteButton().setImageResource(R.drawable.ic_star);
-                    addFavourite(email);
-                    isFavourite(email);
+                    Toast.makeText(v.getContext(), firstName + " " + lastName + " \nadded to your favourites.", Toast.LENGTH_SHORT).show();
+                    favEmails.add(artist.getAsJsonObject().get("email"));
+                    updateFavorites(favEmails);
+                    favorite = true;
                 } else {
                     viewHolder.getFavoriteButton().setImageResource(R.drawable.ic_star_border_black);
-                    removeFavourite(email);
-                    isFavourite(email);
+                    Toast.makeText(v.getContext(), firstName + " " + lastName + " \nremoved from your favourites.", Toast.LENGTH_SHORT).show();
+                    JsonArray arr = favEmails.deepCopy();
+                    Iterator<JsonElement> i = arr.iterator();
+                    while (i.hasNext()) {
+                        JsonElement fava = i.next();
+                        Log.d("esate", "fava: " + fava.getAsString());
+                        Log.d("esate", "email: " + email);
+                        if (fava.getAsString().equals(email)) i.remove();
+                    }
+                    Log.d("esate", "arr: " + arr.toString());
+                    updateFavorites(arr);
+                    favorite = false;
                 }
             }
         });
@@ -239,10 +261,10 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
             localDataSet = wholeSet.deepCopy();
             // TODO: Can the two iterator blocks be combined?
             filteredByStyle = wholeSet.deepCopy();
-            Iterator i = filteredByStyle.iterator();
+            Iterator<JsonElement> i = filteredByStyle.iterator();
             while (i.hasNext()) {
                 boolean remove = true;
-                JsonElement artist = (JsonElement) i.next();
+                JsonElement artist = i.next();
                 try {
                     JsonArray styles = artist.getAsJsonObject().getAsJsonArray("styles");
                     for (JsonElement style : styles) {
@@ -251,6 +273,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
                         }
                     }
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
                 if (remove) {
                     i.remove();
@@ -258,10 +281,10 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
             }
 
             filteredByPerson = wholeSet.deepCopy();
-            Iterator j = filteredByPerson.iterator();
+            Iterator<JsonElement> j = filteredByPerson.iterator();
             while (j.hasNext()) {
                 boolean remove = true;
-                JsonElement artist = (JsonElement) j.next();
+                JsonElement artist = j.next();
                 String title;
                 try {
                     title = artist.getAsJsonObject().getAsJsonObject("name").get("title").getAsString();
@@ -289,12 +312,12 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
             }
 
             filteredByDistance = wholeSet.deepCopy();
-            Iterator k = filteredByDistance.iterator();
+            Iterator<JsonElement> k = filteredByDistance.iterator();
             while (k.hasNext()) {
-                boolean remove = true;
+                boolean remove;
                 double userLat = location.get("latitude").getAsDouble();
                 double userLng = location.get("longitude").getAsDouble();
-                JsonElement artist = (JsonElement) k.next();
+                JsonElement artist = k.next();
                 JsonObject artistLatLng = new JsonObject();
                 double artistLat = 0;
                 double artistLng = 0;
@@ -325,9 +348,17 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
                         userLng,
                         artistLng
                 );
-                if (distance < distanceFilter) remove = false;
+
+                if (distance < distanceFilter) {
+                    remove = false;
+
+                }
+                else {
+                    remove = true;
+                }
                 if (remove) k.remove();
             }
+            localDataSet = filteredByDistance.deepCopy();
 
             /*
             When filters are set, compare the filtered lists and find common items.
@@ -397,11 +428,13 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         // calculate the result
         return (c * r);
     }
-  
-    public void isFavourite(String email) {
+
+/*    public Boolean isFavourite(String email) {
+        final Boolean[] retVal = {false};
         DatabaseReference myRef = database.getReference();
         String userEmail = mAuth.getCurrentUser().getEmail();
-        myRef.child("users").child(getUserRole() + "s").orderByChild("email").equalTo(userEmail).addValueEventListener(new ValueEventListener() {
+        myRef.child("users").child(getUserRole() + "s").orderByChild("email").equalTo(userEmail).addListenerForSingleValueEvent(new ValueEventListener() {
+
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
@@ -423,12 +456,14 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
                 if (favouritesEmails == null) {
                     favouritesEmails = new ArrayList<>();
                 }
-                Log.d("favouritesEmails", favouritesEmails.toString());
-                if(favouritesEmails.contains(email)) {
+             *//*   Log.d("favouritesEmails", favouritesEmails.toString());
+                Log.d("favouritesEmails", String.valueOf((favouritesEmails.contains(email))));*//*
+                retVal[0] = (favouritesEmails.contains(email));
+                *//*if(favouritesEmails.contains(email)) {
                     favorite = true;
                 } else {
                     favorite = false;
-                }
+                }*//*
             }
 
             @Override
@@ -437,9 +472,10 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
                 Log.w("ERROR: ", "Failed to read value.", error.toException());
             }
         });
-    }
+        return retVal[0];
+    }*/
 
-    public void addFavourite(String favouriteEmail) {
+/*    public void addFavourite(String favouriteEmail) {
         DatabaseReference myRef = database.getReference();
         String userEmail = mAuth.getCurrentUser().getEmail();
         myRef.child("users").child(getUserRole() + "s").orderByChild("email").equalTo(userEmail).addValueEventListener(new ValueEventListener() {
@@ -464,7 +500,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
                 if (favouritesEmails == null) {
                     favouritesEmails = new ArrayList<>();
                 }
-                if(!favouritesEmails.contains(favouriteEmail)) {
+                if (!favouritesEmails.contains(favouriteEmail)) {
                     favouritesEmails.add(favouriteEmail);
                 }
                 myRef.child("users").child(userRole[0] + "s").child(mAuth.getCurrentUser().getUid()).child("favourites").setValue(favouritesEmails);
@@ -477,30 +513,31 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
             }
         });
 
-    }
+    }*/
 
-    public void removeFavourite(String favouriteToRemove) {
+/*    public void removeFavourite(String favouriteToRemove) {
         DatabaseReference db = database.getReference();
         DatabaseReference myRef = db.child("users").child(getUserRole() + "s").child(mAuth.getUid()).child("favourites");
         Log.d("myRef", myRef.toString());
-       // myRef.child("favourites").orderByValue().equalTo(favouriteToRemove).;
+        // myRef.child("favourites").orderByValue().equalTo(favouriteToRemove).;
 
         myRef.orderByValue().equalTo(favouriteToRemove).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot data: dataSnapshot.getChildren()){
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
                     Log.d("data.getRef", data.getRef().toString());
                     data.getRef().removeValue();
                 }
 
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.w("ERROR: ",  databaseError.toException());
+                Log.w("ERROR: ", databaseError.toException());
             }
         });
 
-    }
+    }*/
 
     public void getUserRoleFromDB(String email) {
         DatabaseReference artistUserRef = FirebaseDatabase.getInstance().getReference().child("users").child("artists");
@@ -512,6 +549,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
                     updateUserRoleCB("artist");
                 }
             }
+
             @Override
             public void onCancelled(DatabaseError error) {
                 // Failed to read value -JK
@@ -528,6 +566,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
                     Log.d("datasnapShot clients", dataSnapshot.toString());
                 }
             }
+
             @Override
             public void onCancelled(DatabaseError error) {
                 // Failed to read value -JK
@@ -544,4 +583,25 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
     public String getUserRole() {
         return userRole[0];
     }
+
+    public void updateFavorites(JsonArray userFavoriteArray) {
+        String faves = gson.toJson(userFavoriteArray);
+        ArrayList<String> favArr = gson.fromJson(faves, new TypeToken<List<String>>() {}.getType());
+        HashMap<String, Object> updateTable = new HashMap<>();
+        updateTable.put("/favourites/", favArr);
+        Log.d("esate", "updatetable" + updateTable.toString());
+        myRef.child("users").child("clients").child(userId).updateChildren(updateTable);
+    }
+
+    public boolean isFava(JsonArray arr, JsonElement elm) {
+        Iterator<JsonElement> i = arr.iterator();
+        boolean retVal = false;
+        while (i.hasNext()) {
+            JsonElement fav = i.next();
+            if (fav.getAsString().equals(elm.getAsString())) retVal = true;
+        }
+        return retVal;
+    }
 }
+
+

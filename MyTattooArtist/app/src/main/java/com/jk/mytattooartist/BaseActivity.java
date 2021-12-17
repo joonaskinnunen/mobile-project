@@ -29,6 +29,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
 
@@ -49,6 +50,8 @@ public class BaseActivity  extends AppCompatActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance("https://mytattooartist-d2298-default-rtdb.europe-west1.firebasedatabase.app/");
     final String[] userRole = {""};
     boolean isNewUser = false;
+    JsonArray favEmails = new JsonArray();
+
 
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
@@ -297,4 +300,5 @@ public class BaseActivity  extends AppCompatActivity {
     public String getUserRole() {
         return userRole[0];
     }
+
 }
