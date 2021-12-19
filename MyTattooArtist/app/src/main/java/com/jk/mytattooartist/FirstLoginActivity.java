@@ -28,8 +28,12 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
+import com.google.gson.reflect.TypeToken;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 public class FirstLoginActivity extends BaseActivity {
 
@@ -141,8 +145,11 @@ public class FirstLoginActivity extends BaseActivity {
             // Create new object from Name class -JK
             Name name = new Name(firstNameTv.getText().toString(), lastNameTv.getText().toString());
 
+            ArrayList<String> favArr = new ArrayList<>();
+            favArr.add("marcus.edwards@example.com");
+
             // Create new object from User class -JK
-            User user = new User(firebaseUser.getEmail(), name, selectedLocation, selectedLatLng, phoneTv.getText().toString());
+            User user = new User(firebaseUser.getEmail(), name, selectedLocation, selectedLatLng, phoneTv.getText().toString(), favArr);
 
         // If user selected client as user role, add new user to the database path 'users/clients' -JK
         if(selectedRadioButtonId == clientRadioButton.getId()) {
@@ -152,6 +159,7 @@ public class FirstLoginActivity extends BaseActivity {
                 Toast toast = Toast.makeText(this, R.string.nameInputError, Toast.LENGTH_SHORT);
                 toast.show();
             } else {
+
                 // Store user information to the DB  -JK
                 myRef.child("users").child("clients").child(mAuth.getCurrentUser().getUid()).setValue(user);
 
@@ -200,13 +208,15 @@ public class FirstLoginActivity extends BaseActivity {
         public String city;
         public LatLng latLng;
         public String phone;
+        public ArrayList favourites;
 
-        public User(String email, Name name, String city, LatLng latLng, String phone) {
+        public User(String email, Name name, String city, LatLng latLng, String phone, ArrayList<String> favourites) {
             this.email = email;
             this.name = name;
             this.city = city;
             this.latLng = latLng;
             this.phone = phone;
+            this.favourites = favourites;
 
         }
 

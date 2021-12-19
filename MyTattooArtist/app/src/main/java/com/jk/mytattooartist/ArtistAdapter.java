@@ -594,12 +594,15 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
     }
 
     public boolean isFava(JsonArray arr, JsonElement elm) {
-        Iterator<JsonElement> i = arr.iterator();
         boolean retVal = false;
-        while (i.hasNext()) {
-            JsonElement fav = i.next();
-            if (fav.getAsString().equals(elm.getAsString())) retVal = true;
+        if(arr != null) {
+            Iterator<JsonElement> i = arr.iterator();
+            while (i.hasNext()) {
+                JsonElement fav = i.next();
+                if (fav.getAsString().equals(elm.getAsString())) retVal = true;
+            }
         }
+
         return retVal;
     }
 }
