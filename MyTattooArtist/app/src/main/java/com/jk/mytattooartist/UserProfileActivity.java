@@ -85,7 +85,7 @@ public class UserProfileActivity extends BaseActivity {
         name.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String value = dataSnapshot.child("title").getValue(String.class) +". "+ dataSnapshot.child("first").getValue(String.class)+" "+ dataSnapshot.child("last").getValue(String.class);
+                String value = dataSnapshot.child("first").getValue(String.class)+" "+ dataSnapshot.child("last").getValue(String.class);
                 Log.i("VALUE: ", "Value is: " + value);
                 TextView tv = findViewById(R.id.userProfileNameField);
                 tv.setText(value);
@@ -129,7 +129,7 @@ public class UserProfileActivity extends BaseActivity {
             }
         });
 
-
+/*
         // Read username from database and place it to views username field. -VS
         userID.addValueEventListener(new ValueEventListener() {
             @Override
@@ -145,6 +145,7 @@ public class UserProfileActivity extends BaseActivity {
                 Log.w("VALUE: ", "onCancelled", databaseError.toException());
             }
         });
+        */
 
     }
 
