@@ -45,7 +45,7 @@ public class MainActivity extends BaseActivity {
             createSignInIntent();
         }
 
-       /*  Intent intent = new Intent(this, FirstLoginActivity.class);
+      /*  Intent intent = new Intent(this, FirstLoginActivity.class);
         startActivity(intent); */
     }
 
