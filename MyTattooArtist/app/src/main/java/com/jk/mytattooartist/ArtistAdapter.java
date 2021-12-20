@@ -45,6 +45,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
     DatabaseReference myRef = database.getReference();
     String userId = currentUser.getUid();
     final String[] userRole = {""};
+    String rolex;
 
     private JsonArray localDataSet;
     private JsonArray wholeSet;
@@ -111,16 +112,19 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
      * @param jsonArray String containing the data to populate views to be used
      *                  by RecyclerView. -ET
      */
-    public ArtistAdapter(String jsonArray) throws JSONException {
+    public ArtistAdapter(String jsonArray, String role) throws JSONException {
         JsonArray jsonArr = gson.fromJson(jsonArray, JsonArray.class);
 
         localDataSet = jsonArr;
         wholeSet = localDataSet.deepCopy();
         filteredByStyle = localDataSet.deepCopy();
         filteredByPerson = localDataSet.deepCopy();
+        rolex=role;
 
         // Getting the user's location from Firebase
-        myRef.child("users").child("clients").child(userId).addValueEventListener(new ValueEventListener() {
+//        getUserRoleFromDB(currentUser.getEmail());
+        Log.d("esate", "role: " + role);
+        myRef.child("users").child(role).child(userId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 try {
@@ -147,7 +151,7 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
-        if (mAuth.getCurrentUser() != null) getUserRoleFromDB(mAuth.getCurrentUser().getEmail());
+//        if (mAuth.getCurrentUser() != null) getUserRoleFromDB(mAuth.getCurrentUser().getEmail());
         // Create a new view, which defines the UI of the list item -ET
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.artist_item, viewGroup, false);
@@ -206,8 +210,9 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
                     viewHolder.getFavoriteButton().setImageResource(R.drawable.ic_star);
                     Toast.makeText(v.getContext(), firstName + " " + lastName + " \nadded to your favourites.", Toast.LENGTH_SHORT).show();
                     favEmails.add(artist.getAsJsonObject().get("email"));
+                    Log.d("esate", "favemails: " + favEmails.toString());
                     updateFavorites(favEmails);
-                    favorite = true;
+//                    favorite = true;
                 } else {
                     viewHolder.getFavoriteButton().setImageResource(R.drawable.ic_star_border_black);
                     Toast.makeText(v.getContext(), firstName + " " + lastName + " \nremoved from your favourites.", Toast.LENGTH_SHORT).show();
@@ -221,8 +226,9 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
                     }
                     Log.d("esate", "arr: " + arr.toString());
                     updateFavorites(arr);
-                    favorite = false;
+//                    favorite = false;
                 }
+                favorite = !favorite;
             }
         });
 
@@ -589,8 +595,9 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
         ArrayList<String> favArr = gson.fromJson(faves, new TypeToken<List<String>>() {}.getType());
         HashMap<String, Object> updateTable = new HashMap<>();
         updateTable.put("/favourites/", favArr);
-        Log.d("esate", "updatetable" + updateTable.toString());
-        myRef.child("users").child("clients").child(userId).updateChildren(updateTable);
+        Log.d("esate", "updatetable: " + updateTable.toString());
+        Log.d("esate", "userid: " + userId);
+        myRef.child("users").child(rolex).child(userId).updateChildren(updateTable);
     }
 
     public boolean isFava(JsonArray arr, JsonElement elm) {

@@ -59,6 +59,8 @@ public class BaseActivity  extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
         if(mAuth.getCurrentUser() != null) getUserRoleFromDB(mAuth.getCurrentUser().getEmail());
+        userRole[0] = getUserRole();
+        Log.d("esate","user role: " + userRole[0]);
         ActionBar actionBar = getSupportActionBar();
 
         // Showing the back button in action bar -JK
@@ -252,8 +254,12 @@ public class BaseActivity  extends AppCompatActivity {
 
     public void startFavourites(JSONArray dbData) {
 
+        Bundle extras = new Bundle();
+        extras.putString("array", dbData.toString());
+        extras.putString("role", userRole[0]);
         Intent intent = new Intent(this, FavouriteActivity.class);
-        intent.putExtra("Data", String.valueOf(dbData));
+        intent.putExtras(extras);
+//        intent.putExtra("Data", String.valueOf(dbData));
 
         startActivity(intent);
     }

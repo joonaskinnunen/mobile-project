@@ -21,6 +21,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.slider.LabelFormatter;
 import com.google.android.material.slider.RangeSlider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,6 +42,8 @@ public class FrontPageActivity extends BaseActivity {
     Boolean isFABOpen = false;
     JSONArray filteredData = new JSONArray();
     JSONArray jsonArray2 = new JSONArray();
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    DatabaseReference myRef = FirebaseDatabase.getInstance().getReference();
 
     // Integer for filtering by distance -ET
     float distance = 0;
@@ -63,13 +71,26 @@ public class FrontPageActivity extends BaseActivity {
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+
         // Set adapter for recyclerview -ET
-        try {
-            artistAdapter = new ArtistAdapter(arrayList);
-            recyclerView.setAdapter(artistAdapter);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        myRef.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                try {
+                    artistAdapter = new ArtistAdapter(arrayList, getUserRole() + "s");
+
+                    recyclerView.setAdapter(artistAdapter);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
 
         // Floating action buttons -ET
         fabFilters = findViewById(R.id.fabFilters);

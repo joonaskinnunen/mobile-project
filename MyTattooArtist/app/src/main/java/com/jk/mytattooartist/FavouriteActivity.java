@@ -32,6 +32,7 @@ public class FavouriteActivity extends BaseActivity {
     private FirebaseAuth mAuth;
     Gson gson = new Gson();
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -49,18 +50,24 @@ public class FavouriteActivity extends BaseActivity {
         recyclerView = findViewById(R.id.recyclerViewFavourite);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        String arrayList = getIntent().getExtras().getString("Data");
+        String arrayList = getIntent().getExtras().getString("array");
+        String role = getIntent().getExtras().getString("role");
 
         // Get the user email -JK
         String userEmail = mAuth.getCurrentUser().getEmail();
 
+        getUserRoleFromDB(mAuth.getCurrentUser().getEmail());
+
+//        Log.d("esate", "user erole: " + role);
+
         // Get the users favourite artists from DB -JK
-        myRef.child("users").child("clients").orderByChild("email").equalTo(userEmail).addValueEventListener(new ValueEventListener() {
+        myRef.child("users").child(role + "s").orderByChild("email").equalTo(userEmail).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
                 Map<String,Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                Log.d("esate", "map: " + map.toString());
                 List<String> keys = new ArrayList(map.keySet());
                 ArrayList<Object> arList = new ArrayList<>();
                 for (int i=0;i<map.size();i++) {
@@ -135,10 +142,11 @@ public class FavouriteActivity extends BaseActivity {
 
                 // Convert ArrayList to JsonArray and add data to the adapter -JK
                 try {
-                    ArtistAdapter artistAdapter = new ArtistAdapter(filteredList.toString());
+                    ArtistAdapter artistAdapter = new ArtistAdapter(filteredList.toString(), getUserRole() + "s");
                     String json = gson.toJson(filteredList);
                     JsonArray filtered = gson.fromJson(json, JsonArray.class);
                     artistAdapter.favEmails = filtered;
+                    artistAdapter.userRole[0] = role;
                     recyclerView.setAdapter(artistAdapter);
                 } catch (JSONException e) {
                     e.printStackTrace();
