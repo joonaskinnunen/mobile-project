@@ -14,6 +14,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,6 +30,7 @@ public class FavouriteActivity extends BaseActivity {
     // Initialize recyclerView and FirebaseAuth -JK
     RecyclerView recyclerView;
     private FirebaseAuth mAuth;
+    Gson gson = new Gson();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,7 +135,11 @@ public class FavouriteActivity extends BaseActivity {
 
                 // Convert ArrayList to JsonArray and add data to the adapter -JK
                 try {
-                    recyclerView.setAdapter(new ArtistAdapter(filteredList.toString()));
+                    ArtistAdapter artistAdapter = new ArtistAdapter(filteredList.toString());
+                    String json = gson.toJson(filteredList);
+                    JsonArray filtered = gson.fromJson(json, JsonArray.class);
+                    artistAdapter.favEmails = filtered;
+                    recyclerView.setAdapter(artistAdapter);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
