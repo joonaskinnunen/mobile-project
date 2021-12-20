@@ -601,6 +601,8 @@ public class ArtistAdapter extends RecyclerView.Adapter<ArtistAdapter.ViewHolder
                 JsonElement fav = i.next();
                 if (fav.getAsString().equals(elm.getAsString())) retVal = true;
             }
+        } else {
+            favEmails = new JsonArray();
         }
 
         return retVal;

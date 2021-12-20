@@ -8,7 +8,7 @@
     <string name="profilePasswordTag">Password:</string>
     <string name="profileUsernameTag">Username:</string>
     <string name="changePasswordButton">Change Password</string>
-    <string name="profileAddressTag">Address:</string>
+    <string name="profileAddressTag">Location:</string>
     <string name="profilePhoneTag">Phone number:</string>
     <string name="profileSocialsTag">Socials</string>
     <string name="facebook_application_id" translatable="false">578819726735017</string>
