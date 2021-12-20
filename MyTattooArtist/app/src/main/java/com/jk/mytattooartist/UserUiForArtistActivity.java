@@ -43,7 +43,7 @@ public class UserUiForArtistActivity extends BaseActivity {
     private TextView profilePhoneTagTv;
     private TextView profilePhoneFieldTv;
     private TextView profileAddressTagTv;
-    private TextView profileStreetFieldTv;
+   // private TextView profileStreetFieldTv;
     private TextView profileCityFieldTv;
     private TextView profileSocialsTagTv;
     private ImageView imageView;
@@ -68,7 +68,7 @@ public class UserUiForArtistActivity extends BaseActivity {
         profilePhoneTagTv = findViewById(R.id.profilePhoneTagTv);
         profilePhoneFieldTv = findViewById(R.id.profilePhoneFieldTv);
         profileAddressTagTv = findViewById(R.id.profileAddressTagTv);
-        profileStreetFieldTv = findViewById(R.id.profileStreetFieldTv);
+   //     profileStreetFieldTv = findViewById(R.id.profileStreetFieldTv);
         profileCityFieldTv = findViewById(R.id.profileCityFieldTv);
         profileSocialsTagTv = findViewById(R.id.profileSocialsTagTv);
         imageView = findViewById(R.id.imageView2);
@@ -77,7 +77,7 @@ public class UserUiForArtistActivity extends BaseActivity {
         profileNameTagTv.setText("Name: ");
         profileMailTagTv.setText("Email: ");
         profilePhoneTagTv.setText("Phone: ");
-        profileAddressTagTv.setText("Address: ");
+        profileAddressTagTv.setText("Location: ");
 
         // set up the variables for recycled view. -VS
         recyclerView = findViewById(R.id.RecyclerViewInstagramMediaUser);
@@ -132,9 +132,9 @@ public class UserUiForArtistActivity extends BaseActivity {
         }
 
         try {
-            JSONObject location = new JSONObject(artist.getString("location"));
-            JSONObject street = new JSONObject(location.getString("street"));
-            profileStreetFieldTv.setText(street.getString("name") + " " + street.getString("number") +"\n" + location.getString("city"));
+        //    JSONObject location = new JSONObject(artist.getString("location"));
+        //    JSONObject street = new JSONObject(location.getString("street"));
+            profileCityFieldTv.setText(artist.getString("city"));
 
         } catch (JSONException e) {
             e.printStackTrace();

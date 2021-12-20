@@ -104,6 +104,8 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/profilePhoneTag" />
 
+
+
             <TextView
                 android:id="@+id/profileAddressTag"
                 android:layout_width="wrap_content"
@@ -114,15 +116,15 @@
                 android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/profilePhoneField" />
-
-            <TextView
-                android:id="@+id/profileStreetField"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="10dp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/profileAddressTag" />
+            <!--
+                       <TextView
+                            android:id="@+id/profileStreetField"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="20dp"
+                            android:layout_marginTop="10dp"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/profileAddressTag" /> -->
 
             <TextView
                 android:id="@+id/profileCityField"
@@ -131,7 +133,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="10dp"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/profileStreetField" />
+                app:layout_constraintTop_toBottomOf="@+id/profileAddressTag" />
 
             <TextView
                 android:id="@+id/profileSocialsTag"

@@ -342,8 +342,8 @@ public class ArtistProfileActivity extends BaseActivity {
         DatabaseReference artists = users.child("artists");
         DatabaseReference userID = artists.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
         DatabaseReference name = userID.child("name");
-        DatabaseReference location = userID.child("location");
-        DatabaseReference street = location.child("street");
+        DatabaseReference location = userID.child("city");
+        //DatabaseReference street = location.child("street");
 
 
         // Read name from the database -JM
@@ -404,7 +404,7 @@ public class ArtistProfileActivity extends BaseActivity {
         });
 
         // Read street from the database -JM
-        street.addValueEventListener(new ValueEventListener() {
+       /* street.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
@@ -420,7 +420,7 @@ public class ArtistProfileActivity extends BaseActivity {
                 // Failed to read value
                 Log.w("ERROR: ", "Failed to read value.", error.toException());
             }
-        });
+        }); */
 
         // Read postcode and city from the database -JM
         location.addValueEventListener(new ValueEventListener() {
@@ -428,7 +428,7 @@ public class ArtistProfileActivity extends BaseActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated
-                String value = dataSnapshot.child("postcode").getValue() + " " + dataSnapshot.child("city").getValue(String.class);
+                String value = dataSnapshot.getValue(String.class);
                 Log.i("VALUE: ", "value is: " + value);
                 TextView tv = findViewById(R.id.profileCityField);
                 tv.setText(value);
